@@ -10,8 +10,12 @@ async function phoneHttps(mode: string) {
   return [basicSsl()];
 }
 
+// GitHub Pages serves under /wortwechsel/; Netlify sets BASE_PATH=/ (see netlify.toml).
+declare const process: { env: Record<string, string | undefined> };
+const BASE = process.env.BASE_PATH ?? '/wortwechsel/';
+
 export default defineConfig(async ({ mode }) => ({
-  base: '/wortwechsel/',
+  base: BASE,
   plugins: [
     react(),
     ...(await phoneHttps(mode)),
@@ -24,9 +28,9 @@ export default defineConfig(async ({ mode }) => ({
         description: 'Aktiver Wortschatz aus der eigenen Sprache',
         lang: 'ru',
         display: 'standalone',
-        id: '/wortwechsel/app-v2',
-        start_url: '/wortwechsel/',
-        scope: '/wortwechsel/',
+        id: `${BASE}app-v2`,
+        start_url: BASE,
+        scope: BASE,
         theme_color: '#ff5e7e',
         background_color: '#fbf6ec',
         icons: [
