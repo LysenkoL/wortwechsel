@@ -11,6 +11,12 @@ import type { AnalyzeRequest, EvaluateRequest } from './types';
 import { getSetting, incrementUsage } from '../db/repo';
 
 const MAX_TEXT = 600;
+
+/** Pause between attempts when Google answers 5xx ("overloaded"); tests set it to 0. */
+export const retryPolicy = { delayMs: 1500 };
+const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+const isServerBusy = (e: unknown) =>
+  e instanceof AiError && e.code === 'NETWORK' && /^HTTP 5\d\d$/.test(e.detail ?? '');
 const CONTEXTS = ['work', 'daily', 'office', 'free'];
 
 const textOk = (s: unknown, allowEmpty = false): s is string =>
@@ -40,15 +46,26 @@ async function call(
   if (typeof navigator !== 'undefined' && navigator.onLine === false) throw new AiError('NETWORK', 'offline');
   const apiKey = (await getSetting<string>('apiKey', '')).trim();
   if (!apiKey) throw new AiError('NO_KEY');
-  const model = (await getSetting<string>(`${kind}Model`, '')).trim() || defaultModel;
+  const chosen = (await getSetting<string>(`${kind}Model`, '')).trim() || defaultModel;
+  // Busy server: retry the same model, then try the other default model once.
+  const alternative = chosen === DEFAULT_EVALUATE_MODEL ? DEFAULT_ANALYZE_MODEL : DEFAULT_EVALUATE_MODEL;
+  const models = [chosen, chosen, alternative];
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-  try {
-    return await generateStructured({ apiKey, model, systemPrompt, userText, schema, signal: controller.signal });
-  } finally {
-    clearTimeout(timeout);
+  let last: unknown;
+  for (let i = 0; i < models.length; i++) {
+    if (i > 0) await sleep(retryPolicy.delayMs * i);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+    try {
+      return await generateStructured({ apiKey, model: models[i], systemPrompt, userText, schema, signal: controller.signal });
+    } catch (e) {
+      last = e;
+      if (!isServerBusy(e)) throw e;
+    } finally {
+      clearTimeout(timeout);
+    }
   }
+  throw last;
 }
 
 /** Run `attempt` once more if the model's answer was unusable. */

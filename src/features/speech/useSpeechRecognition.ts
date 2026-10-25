@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { mergeText } from './mergeText';
 import { getSpeechRecognitionCtor, type SpeechRecognitionLike, type SpeechResultsLike } from './speechTypes';
 
 export type SpeechState = 'idle' | 'listening' | 'stopped' | 'error';
@@ -9,7 +10,7 @@ interface Options {
   maxSeconds?: number;
 }
 
-const join = (a: string, b: string) => [a, b].map((s) => s.trim()).filter(Boolean).join(' ');
+const join = mergeText;
 
 /** Split one recognition session into confirmed and still-changing text. */
 function splitResults(results: SpeechResultsLike): { final: string; interim: string } {

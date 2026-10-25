@@ -101,8 +101,23 @@ describe('analyze', () => {
   it.each([
     [401, 'BAD_KEY'], [403, 'BAD_KEY'], [429, 'QUOTA'], [404, 'BAD_REQUEST'], [500, 'NETWORK'], [503, 'NETWORK'],
   ])('maps HTTP %i to %s', async (status, code) => {
-    fetchMock.mockReturnValueOnce(respond({ error: { message: 'x' } }, status));
+    fetchMock.mockImplementation(() => respond({ error: { message: 'x' } }, status));
     await expect(analyze(req)).rejects.toMatchObject({ code });
+  });
+
+  it('retries a busy server (5xx), then falls back to the other model', async () => {
+    fetchMock.mockImplementation(() => respond({ error: { message: 'busy' } }, 503));
+    await expect(analyze(req)).rejects.toMatchObject({ code: 'NETWORK', detail: 'HTTP 503' });
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+    const urls = fetchMock.mock.calls.map((c) => String(c[0]));
+    expect(urls[0]).toBe(urls[1]);
+    expect(urls[2]).not.toBe(urls[0]);
+  });
+
+  it('recovers when the server answers after a 503', async () => {
+    fetchMock.mockReturnValueOnce(respond({ error: { message: 'busy' } }, 503));
+    fetchMock.mockImplementation(() => respond(geminiBody(A[0].output)));
+    await expect(analyze(req)).resolves.toBeTruthy();
   });
 
   it('maps a 400 about the API key to BAD_KEY, other 400s to BAD_REQUEST', async () => {
