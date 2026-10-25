@@ -24,6 +24,7 @@ export default defineConfig(async ({ mode }) => ({
         description: 'Aktiver Wortschatz aus der eigenen Sprache',
         lang: 'ru',
         display: 'standalone',
+        id: '/wortwechsel/app-v2',
         start_url: '/wortwechsel/',
         scope: '/wortwechsel/',
         theme_color: '#ff5e7e',
