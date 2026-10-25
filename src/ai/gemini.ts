@@ -42,8 +42,8 @@ export async function generateStructured(req: StructuredRequest): Promise<unknow
         generationConfig: { responseMimeType: 'application/json', responseJsonSchema: req.schema },
       }),
     });
-  } catch {
-    throw new AiError(req.signal.aborted ? 'TIMEOUT' : 'NETWORK');
+  } catch (e) {
+    throw new AiError(req.signal.aborted ? 'TIMEOUT' : 'NETWORK', e instanceof Error ? e.message.slice(0, 120) : '');
   }
 
   if (!res.ok) {

@@ -18,6 +18,10 @@ export function describeAiError(e: unknown): DescribedError {
     case 'BLOCKED': return { text: ruAiError.blocked, toSettings: false, retryable: false };
     case 'BAD_REQUEST':
       return { text: ruAiError.badRequest, detail: e instanceof AiError ? e.detail : undefined, toSettings: true, retryable: false };
-    default: return { text: ruAiError.generic, toSettings: false, retryable: true };
+    default: {
+      // Short technical hint (error code + Google's message) so problems can be diagnosed from a screenshot.
+      const detail = e instanceof AiError ? [e.code, e.detail].filter(Boolean).join(': ') : 'unknown';
+      return { text: ruAiError.generic, detail, toSettings: false, retryable: true };
+    }
   }
 }
