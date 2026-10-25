@@ -1,0 +1,91 @@
+{
+  "title": "AnalyzeResponse",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "is_german",
+    "corrected_sentence",
+    "grammar_notes",
+    "suggestions",
+    "keep",
+    "improved_sentence",
+    "generic_words"
+  ],
+  "properties": {
+    "is_german": {
+      "type": "boolean",
+      "description": "false, если текст не на немецком или слишком обрывочный для анализа."
+    },
+    "corrected_sentence": {
+      "type": "string",
+      "description": "Фраза с исправленной только грамматикой (слова не меняются). Пустая строка, если ошибок нет."
+    },
+    "grammar_notes": {
+      "type": "array",
+      "description": "0–2 самые важные грамматические ошибки.",
+      "items": {
+        "title": "GrammarNote",
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["original", "correction", "explanation_ru"],
+        "properties": {
+          "original": { "type": "string", "description": "Фрагмент с ошибкой, как в тексте." },
+          "correction": { "type": "string", "description": "Исправленный фрагмент." },
+          "explanation_ru": { "type": "string", "description": "Правило коротко, по-русски." }
+        }
+      }
+    },
+    "suggestions": {
+      "type": "array",
+      "description": "0–3 замены простых слов на более точные и естественные.",
+      "items": {
+        "title": "Suggestion",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "original",
+          "replacement",
+          "lemma",
+          "pattern",
+          "meaning_ru",
+          "note_ru",
+          "register",
+          "example_de"
+        ],
+        "properties": {
+          "original": { "type": "string", "description": "Точная подстрока из transcript (1–4 слова)." },
+          "replacement": { "type": "string", "description": "Что встаёт на это место в этой фразе, в нужной форме." },
+          "lemma": { "type": "string", "description": "Словарная форма; существительное — с артиклем." },
+          "pattern": { "type": "string", "description": "Типичная связка/управление: jdm. etw. vorschlagen." },
+          "meaning_ru": { "type": "string", "description": "Перевод, 1–4 слова." },
+          "note_ru": { "type": "string", "description": "Когда уместно и чем отличается, до 20 слов." },
+          "register": { "type": "string", "enum": ["colloquial", "neutral", "formal"] },
+          "example_de": { "type": "string", "description": "Новый короткий пример, до 12 слов." }
+        }
+      }
+    },
+    "keep": {
+      "type": "array",
+      "description": "0–2 простых слова из фразы, которые здесь лучше оставить.",
+      "items": {
+        "title": "KeepNote",
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["word", "reason_ru"],
+        "properties": {
+          "word": { "type": "string", "description": "Слово как в тексте." },
+          "reason_ru": { "type": "string", "description": "Почему замена не нужна." }
+        }
+      }
+    },
+    "improved_sentence": {
+      "type": "string",
+      "description": "Фраза со всеми заменами и исправлениями. Без замен и ошибок — исходный текст."
+    },
+    "generic_words": {
+      "type": "array",
+      "description": "Леммы из списка слабых слов, встреченные в тексте, по порядку, без повторов.",
+      "items": { "type": "string" }
+    }
+  }
+}

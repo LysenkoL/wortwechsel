@@ -1,0 +1,10 @@
+# ПРИМЕР. Свои фразы пиши в validation/phrases.txt — он не попадает в GitHub.
+# Свои фразы — по одной на строку: контекст | фраза
+# Контексты: work, daily, office, free
+# Пиши как сказала на самом деле, с ошибками. Строки с # пропускаются.
+# Ниже три тестовые фразы из примеров промпта — их можно оставить для проверки скрипта.
+
+work | Ich habe mit meinem Chef gesprochen und er hat gesagt, dass wir das anders machen müssen.
+daily | Ich gehe morgen zum Arzt, weil ich seit einer Woche Kopfschmerzen habe.
+daily | Gestern ich habe viele Sachen gemacht aber das war nicht so gut für mich
+

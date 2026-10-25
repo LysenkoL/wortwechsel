@@ -1,0 +1,41 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
+
+// Optional self-signed HTTPS for testing on a phone over local Wi-Fi
+// (the microphone only works over HTTPS). Enabled by `npm run dev:phone` (mode "phone").
+async function phoneHttps(mode: string) {
+  if (mode !== 'phone') return [];
+  const { default: basicSsl } = await import('@vitejs/plugin-basic-ssl');
+  return [basicSsl()];
+}
+
+export default defineConfig(async ({ mode }) => ({
+  base: '/wortwechsel/',
+  plugins: [
+    react(),
+    ...(await phoneHttps(mode)),
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: ['icons/icon.svg'],
+      manifest: {
+        name: 'Wortwechsel',
+        short_name: 'Wortwechsel',
+        description: 'Aktiver Wortschatz aus der eigenen Sprache',
+        lang: 'ru',
+        display: 'standalone',
+        start_url: '/wortwechsel/',
+        scope: '/wortwechsel/',
+        theme_color: '#2f5d62',
+        background_color: '#f4efe4',
+        icons: [
+          { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+          { src: 'icons/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+        ],
+      },
+      workbox: { globPatterns: ['**/*.{js,css,html,svg,png}'] },
+    }),
+  ],
+  server: { host: mode === 'phone' ? true : 'localhost' },
+}));

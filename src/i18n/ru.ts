@@ -1,0 +1,160 @@
+// All user-facing UI text lives here (rule: no literals in components).
+export const ru = {
+  nav: { speak: 'Говорить', review: 'Повторить', expressions: 'Выражения', settings: 'Настройки' },
+  common: { back: 'Назад', cancel: 'Отмена', delete: 'Удалить', confirm: 'Подтвердить', loading: 'Загрузка…' },
+} as const;
+
+export const ruSpeech = {
+  tapToSpeak: 'Нажми и говори',
+  stop: 'Стоп',
+  listening: 'Слушаю…',
+  denied: 'Нет доступа к микрофону. Разреши его в настройках браузера.',
+  noSpeech: 'Ничего не услышала. Попробуй ещё раз.',
+  network: 'Распознаванию речи нужен интернет.',
+  unknown: 'Не получилось распознать речь. Попробуй ещё раз.',
+  unsupported: 'Этот браузер не распознаёт речь — введи фразу текстом.',
+} as const;
+
+export const ruContext = { work: 'Работа', daily: 'Быт', office: 'Учреждения', free: 'Свободно' } as const;
+export const ruRegister = { colloquial: 'разг.', neutral: 'нейтр.', formal: 'офиц.' } as const;
+
+export const ruAiError = {
+  noKey: 'Сначала введи ключ Gemini API в Настройках.',
+  badKey: 'Ключ не подходит. Проверь его в Настройках.',
+  quota: 'Бесплатный лимит на сегодня исчерпан. Он обновится около 9:00 утра.',
+  blocked: 'Модель отказалась отвечать на эту фразу. Попробуй переформулировать.',
+  badRequest: 'Запрос отклонён. Проверь названия моделей в Настройках.',
+  generic: 'Не получилось получить ответ. Попробуй ещё раз.',
+  toSettings: 'Открыть Настройки',
+  retry: 'Повторить',
+} as const;
+
+export const ruSpeak = {
+  title: 'Говорить',
+  anotherQuestion: 'Другой вопрос',
+  noQuestion: 'Без вопроса',
+  withQuestion: 'С вопросом',
+  privacy: 'Не называй имён, адресов и данных о здоровье — фраза уходит в Google.',
+  textLabel: 'Проверь: так ли ты сказала? Исправь, если распознавание ошиблось.',
+  textPlaceholder: 'Или введи фразу текстом',
+  analyze: 'Анализировать',
+  analyzing: 'Анализирую…',
+  notGerman: 'Не получилось распознать немецкую фразу. Попробуй ещё раз.',
+  grammar: 'Грамматика',
+  learn: 'Учить',
+  canKeep: 'Можно оставить',
+  better: 'Как сказать лучше',
+  listen: 'Прослушать',
+  nothingToReplace: 'Хорошая фраза — заменять нечего.',
+  save: 'Сохранить',
+  saved: (n: number) => (n === 0 ? 'Фраза сохранена.' : `Сохранено: ${n}. Первое повторение — завтра.`),
+  again: 'Новая фраза',
+  slang: 'Слабые слова',
+} as const;
+
+export const ruReview = {
+  title: 'Повторить',
+  nothingDue: 'На сегодня всё.',
+  nextReview: (date: string) => `Следующее повторение: ${date}.`,
+  summary: (items: number, phrases: number) => `Сегодня: ${items} выражений в ${phrases} фразах`,
+  start: 'Начать',
+  progress: (i: number, n: number) => `${i} / ${n}`,
+  task: 'Скажи эту фразу иначе — без:',
+  hint: 'Подсказка',
+  hintLabelMeaning: 'Значение',
+  hintLabelStart: 'Начало',
+  answerLabel: 'Твой ответ (можно поправить)',
+  answerPlaceholder: 'Или введи ответ текстом',
+  check: 'Проверить',
+  checking: 'Проверяю…',
+  skip: 'Пропустить',
+  next: 'Дальше',
+  easy: 'Было легко',
+  better: 'Лучше так',
+  used: 'использовано',
+  notUsed: 'не использовано',
+  doneTitle: 'Готово',
+  done: (n: number, k: number) => `Повторено выражений: ${n}. Стали активными: ${k}.`,
+  quotaStop: 'Лимит проверок на сегодня исчерпан, продолжим завтра. Неоценённые фразы остались на завтра.',
+  home: 'К фразам',
+  without: 'Без',
+} as const;
+
+export const ruExpr = {
+  title: 'Выражения',
+  tabs: { learning: 'Учу', active: 'Активные', suspended: 'Пауза' },
+  search: 'Поиск',
+  empty: 'Здесь пока пусто.',
+  fromPhrase: 'Из фразы',
+  progress: (n: number) => `Употребила: ${n} из 3 дней`,
+  nextReview: (when: string) => `Следующее повторение: ${when}`,
+  today: 'сегодня',
+  pause: 'Пауза',
+  resume: 'Вернуть',
+  delete: 'Удалить',
+  confirmDelete: 'Удалить выражение?',
+  yes: 'Да, удалить',
+} as const;
+
+export const ruSettings = {
+  title: 'Настройки',
+  key: 'Ключ Gemini API',
+  show: 'Показать',
+  hide: 'Скрыть',
+  saveKey: 'Сохранить',
+  test: 'Проверить',
+  testing: 'Проверяю…',
+  keyWorks: 'Ключ работает',
+  keySaved: 'Сохранено',
+  howToKey: 'Как получить ключ',
+  howToKeySteps: [
+    'Открой Google AI Studio (aistudio.google.com) и войди в Google-аккаунт.',
+    'Нажми «Get API key» → «Create API key» и скопируй ключ.',
+    'Вставь его сюда. Он хранится только на этом устройстве.',
+  ],
+  models: 'Модели',
+  analyzeModel: 'Анализ фраз',
+  evaluateModel: 'Проверка ответов',
+  byDefault: 'По умолчанию',
+  dailyLimit: 'Повторений в день',
+  voice: 'Голос озвучки',
+  voiceAuto: 'Автоматически',
+  rate: 'Скорость',
+  listen: 'Послушать',
+  sampleText: 'Ich habe das Problem klargemacht.',
+  backup: 'Резервная копия',
+  download: 'Скачать копию',
+  restore: 'Восстановить из файла',
+  replaceAll: 'Заменить всё',
+  merge: 'Объединить',
+  restoreHint: 'Выбери режим для файла:',
+  restored: (u: number, i: number) => `Импортировано: ${u} фраз, ${i} выражений`,
+  usage: 'Использование',
+  usageToday: (a: number, e: number) => `Сегодня: анализ ${a}, проверка ${e}`,
+  usageMonth: (a: number, e: number) => `За месяц: анализ ${a}, проверка ${e}`,
+  usageNote: 'Точные бесплатные лимиты видны в Google AI Studio.',
+  debug: 'Отладка',
+  makeDue: 'Сделать всё доступным сейчас',
+  madeDue: 'Готово: все выражения доступны для повторения.',
+} as const;
+
+export const ruBackup = {
+  reminder: 'Давно не было резервной копии.',
+  toSettings: 'В настройки',
+  close: 'Закрыть',
+} as const;
+
+export const ruUi = {
+  brand: 'Wortwechsel',
+  tagline: 'Говори точнее — по-немецки',
+  statDue: 'к повторению',
+  statTotal: 'выражений',
+  statActive: 'выучено',
+  demo: '✨ Посмотреть пример разбора',
+  demoNote: 'Это пример — ничего не сохранено.',
+  emptyReviewTitle: 'Пока нечего повторять',
+  emptyReviewText: 'Скажи первую фразу — выражения вернутся сюда через день.',
+  emptyExprTitle: 'Здесь будут твои слова',
+  emptyExprText: 'Сохрани замены после разбора фразы — они появятся в этой копилке.',
+  goSpeak: 'Сказать фразу',
+} as const;

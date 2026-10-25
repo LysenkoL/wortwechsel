@@ -1,0 +1,62 @@
+{
+  "title": "EvaluateResponse",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "meaning_preserved",
+    "targets",
+    "naturalness",
+    "errors",
+    "better_version",
+    "feedback_ru"
+  ],
+  "properties": {
+    "meaning_preserved": {
+      "type": "boolean",
+      "description": "rephrase: смысл исходной фразы сохранён. transfer: предложение осмысленное и по теме."
+    },
+    "targets": {
+      "type": "array",
+      "description": "Ровно по одному элементу на каждую цель из запроса, те же id, тот же порядок.",
+      "items": {
+        "title": "TargetResult",
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "used", "correct", "comment_ru"],
+        "properties": {
+          "id": { "type": "string" },
+          "used": { "type": "boolean", "description": "Лемма цели есть в ответе в задуманной функции." },
+          "correct": { "type": "boolean", "description": "Употреблена грамматически и по смыслу верно. При used=false всегда false." },
+          "comment_ru": { "type": "string", "description": "Коротко по этой цели; пустая строка, если нечего сказать." }
+        }
+      }
+    },
+    "naturalness": {
+      "type": "string",
+      "enum": ["natural", "understandable", "unnatural"]
+    },
+    "errors": {
+      "type": "array",
+      "description": "0–3 реальные ошибки в ответе (не пунктуация и не регистр букв).",
+      "items": {
+        "title": "AnswerError",
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["fragment", "correction", "explanation_ru"],
+        "properties": {
+          "fragment": { "type": "string" },
+          "correction": { "type": "string" },
+          "explanation_ru": { "type": "string" }
+        }
+      }
+    },
+    "better_version": {
+      "type": "string",
+      "description": "Ближайшая к ответу естественная версия, где все цели употреблены правильно."
+    },
+    "feedback_ru": {
+      "type": "string",
+      "description": "1–2 конкретных предложения: что получилось и что исправить."
+    }
+  }
+}
