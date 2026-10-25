@@ -26,8 +26,8 @@ export default defineConfig(async ({ mode }) => ({
         display: 'standalone',
         start_url: '/wortwechsel/',
         scope: '/wortwechsel/',
-        theme_color: '#2f5d62',
-        background_color: '#f4efe4',
+        theme_color: '#ff5e7e',
+        background_color: '#fbf6ec',
         icons: [
           { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' },
