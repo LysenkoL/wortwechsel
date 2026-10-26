@@ -4,6 +4,7 @@ import type { WordCard } from '../../../db/types';
 import { ruWords } from '../../../i18n/ru';
 import { answerLang, answerOf, askable, promptOf } from '../../../words/questions';
 import { shuffle } from '../../../words/random';
+import { CardEmoji } from '../CardEmoji';
 import { StudyHeader } from '../StudyHeader';
 import { useSpeak } from '../useSpeak';
 import { WriteQuestion } from '../WriteQuestion';
@@ -71,12 +72,12 @@ export function Write({ cards, direction, onExit, listen = false }: Props) {
       {listen ? (
         <div className="prompt-card center">
           <button type="button" className="btn play-btn" onClick={() => speak(card.term)}>{ruWords.play}</button>
-          {hint ? <p className="muted">{card.definition}</p> : (
+          {hint ? <p className="muted"><CardEmoji card={card} size="sm" /> {card.definition}</p> : (
             <button type="button" className="btn small-btn mt" onClick={() => setHint(true)}>{ruWords.showHint}</button>
           )}
         </div>
       ) : (
-        <div className="prompt-card" lang={dir === 'ru-de' ? 'ru' : 'de'}>{promptOf(card, dir)}</div>
+        <div className="prompt-card" lang={dir === 'ru-de' ? 'ru' : 'de'}><CardEmoji card={card} />{promptOf(card, dir)}</div>
       )}
       <WriteQuestion
         key={`${round}-${idx}`}

@@ -3,6 +3,7 @@ import { recordAnswer } from '../../../db/repo';
 import { ruWords } from '../../../i18n/ru';
 import { gradeAnswer } from '../../../words/grade';
 import { answerLang, askable, buildTest, type QuestionType, type TestQuestion } from '../../../words/questions';
+import { CardEmoji } from '../CardEmoji';
 import { StudyHeader } from '../StudyHeader';
 import type { ModeProps } from './types';
 
@@ -115,7 +116,7 @@ export function TestMode({ cards, direction, onExit }: ModeProps) {
     <section className="page">
       <StudyHeader title={ruWords.mode.test} index={idx} total={questions.length} onExit={onExit} />
       <p className="muted small">{ruWords.type[q.type]}</p>
-      <div className="prompt-card" lang={direction === 'ru-de' ? 'ru' : 'de'}>{q.prompt}</div>
+      <div className="prompt-card" lang={direction === 'ru-de' ? 'ru' : 'de'}><CardEmoji card={q.card} />{q.prompt}</div>
 
       {q.type === 'mc' && (
         <div className="choices">

@@ -4,7 +4,7 @@ import { getSetting, getUsage, setSetting } from '../db/repo';
 import { localDay } from '../srs/scheduler';
 import { ANALYZE_PROMPT, CARDS_PROMPT, EVALUATE_PROMPT, type AnalyzeResponse, type EvaluateResponse } from './contracts.generated';
 import { analyze, diagnose, evaluate, generateCards } from './client';
-import { checkCards } from './postprocess';
+import { checkCards, onlyEmoji } from './postprocess';
 import { AiError } from './errors';
 import type { EvaluateRequest } from './types';
 
@@ -278,17 +278,25 @@ describe('generateCards', () => {
 
   it('topic mode: drops duplicates and terms already in the deck, caps at count', () => {
     const raw = { cards: [
-      { term: ' der Termin ', definition_ru: 'встреча', example_de: 'x', note_ru: '' },
-      { term: 'die Frist', definition_ru: 'срок', example_de: 'x', note_ru: '' },
-      { term: 'Die Frist', definition_ru: 'срок', example_de: 'x', note_ru: '' },
-      { term: '', definition_ru: '', example_de: '', note_ru: '' },
-      { term: 'der Bescheid', definition_ru: 'решение', example_de: 'x', note_ru: '' },
-      { term: 'die Kaution', definition_ru: 'залог', example_de: 'x', note_ru: '' },
+      { term: ' der Termin ', definition_ru: 'встреча', example_de: 'x', note_ru: '', emoji: '' },
+      { term: 'die Frist', definition_ru: 'срок', example_de: 'x', note_ru: '', emoji: '' },
+      { term: 'Die Frist', definition_ru: 'срок', example_de: 'x', note_ru: '', emoji: '' },
+      { term: '', definition_ru: '', example_de: '', note_ru: '', emoji: '' },
+      { term: 'der Bescheid', definition_ru: 'решение', example_de: 'x', note_ru: '', emoji: '' },
+      { term: 'die Kaution', definition_ru: 'залог', example_de: 'x', note_ru: '', emoji: '' },
     ] };
     const r = checkCards(raw, { mode: 'topic', count: 2, exclude: ['Der Termin'] });
     expect(r.cards.map((c) => c.term)).toEqual(['die Frist', 'der Bescheid']);
     expect(() => checkCards({ cards: [] }, { mode: 'topic', count: 2, exclude: [] })).toThrow(AiError);
     expect(() => checkCards({ cards: [{ term: 'x' }] }, { mode: 'topic', count: 2, exclude: [] })).toThrow(AiError);
+  });
+
+  it('keeps at most two emoji and drops text and flags', () => {
+    expect(onlyEmoji(' 🦠 ')).toBe('🦠');
+    expect(onlyEmoji('📝📨💥')).toBe('📝📨');
+    expect(onlyEmoji('Haus 🏠 🇩🇪')).toBe('🏠');
+    expect(onlyEmoji('👩‍💼')).toBe('👩‍💼'); // one grapheme with a joiner
+    expect(onlyEmoji('abc')).toBe('');
   });
 
   it('rejects bad input without a network call', async () => {

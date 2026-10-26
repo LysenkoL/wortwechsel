@@ -289,3 +289,8 @@ h1 { background: var(--grad); -webkit-background-clip: text; background-clip: te
 .btn.rate-4 { color: var(--accent-2); border: 2px solid var(--accent-2); }
 @media (prefers-reduced-motion: reduce) { .tile.wrong { animation: none; } }
 input[aria-invalid='true'] { border-color: var(--bad); }
+
+.card-emoji { display: block; line-height: 1.15; margin-bottom: var(--s2); font-weight: 400; }
+.card-emoji.md { font-size: 2.4rem; }
+.card-emoji.lg { font-size: 3.4rem; }
+.card-emoji.sm { display: inline; font-size: 1.1em; margin: 0; }

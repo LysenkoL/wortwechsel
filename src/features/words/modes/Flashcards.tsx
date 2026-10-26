@@ -3,6 +3,7 @@ import { recordAnswer, updateCard } from '../../../db/repo';
 import type { WordCard } from '../../../db/types';
 import { ruWords } from '../../../i18n/ru';
 import { shuffle } from '../../../words/random';
+import { CardEmoji } from '../CardEmoji';
 import { StudyHeader } from '../StudyHeader';
 import { useSpeak } from '../useSpeak';
 import type { ModeProps } from './types';
@@ -96,6 +97,7 @@ export function Flashcards({ cards, direction, onExit }: ModeProps) {
         }}
         onPointerCancel={() => { startX.current = null; setDx(0); }}
       >
+        <CardEmoji card={card} size="lg" />
         <div className="fc-text" lang={deSide ? 'de' : 'ru'}>{flipped ? back : front}</div>
         {flipped && card.example && <div className="fc-example" lang="de">{card.example}</div>}
         {flipped && card.note && <div className="fc-note muted small">{card.note}</div>}

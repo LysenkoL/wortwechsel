@@ -7,7 +7,7 @@ export interface StarterDeck {
   title: string;
   context: Context;
   description: string;
-  cards: { term: string; definition: string; example: string; note: string }[];
+  cards: { term: string; definition: string; example: string; note: string; emoji: string }[];
 }
 
 export const STARTER_DECKS = starterData as StarterDeck[];

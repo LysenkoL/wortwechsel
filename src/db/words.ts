@@ -86,6 +86,7 @@ export interface CardInput {
   definition: string;
   example?: string;
   note?: string;
+  emoji?: string;
   sourceItemId?: string | null;
 }
 
@@ -96,7 +97,7 @@ function newWordCard(deckId: string, input: CardInput, now: Date): WordCard {
     id: id(), deckId, createdAt: now.getTime(),
     term: input.term.trim(), definition: input.definition.trim(),
     example: (input.example ?? '').trim(), note: (input.note ?? '').trim(),
-    starred: false, sourceItemId: input.sourceItemId ?? null,
+    emoji: (input.emoji ?? '').trim(), starred: false, sourceItemId: input.sourceItemId ?? null,
     stats: emptyStats(), card, due: card.due,
   };
 }
@@ -136,10 +137,11 @@ export async function listCards(deckId: string): Promise<WordCard[]> {
   return cards.sort((a, b) => a.createdAt - b.createdAt);
 }
 
-export async function updateCard(cardId: string, patch: Partial<Pick<WordCard, 'term' | 'definition' | 'example' | 'note' | 'starred'>>): Promise<void> {
+export async function updateCard(cardId: string, patch: Partial<Pick<WordCard, 'term' | 'definition' | 'example' | 'note' | 'emoji' | 'starred'>>): Promise<void> {
   const clean: typeof patch = { ...patch };
-  for (const k of ['term', 'definition', 'example', 'note'] as const) {
-    if (clean[k] !== undefined) clean[k] = clean[k].trim();
+  for (const k of ['term', 'definition', 'example', 'note', 'emoji'] as const) {
+    const v = clean[k];
+    if (v !== undefined) clean[k] = v.trim();
   }
   await db.cards.update(cardId, clean);
 }
@@ -238,5 +240,24 @@ export async function addStarterDeck(starter: StarterDeck, now: Date = new Date(
     );
     await addCards(deckId, starter.cards, now);
     return deckId;
+  });
+}
+
+/** Starter decks added before cards had emoji: take the emoji from the starter data (once, by term). */
+export async function backfillStarterEmoji(starters: StarterDeck[]): Promise<number> {
+  return db.transaction('rw', db.decks, db.cards, async () => {
+    let n = 0;
+    for (const deck of await db.decks.filter((d) => d.starterId !== null).toArray()) {
+      const starter = starters.find((s) => s.id === deck.starterId);
+      if (!starter) continue;
+      const byTerm = new Map(starter.cards.map((c) => [c.term.toLowerCase(), c.emoji]));
+      for (const card of await db.cards.where('deckId').equals(deck.id).toArray()) {
+        const emoji = byTerm.get(card.term.toLowerCase());
+        if (card.emoji || !emoji) continue;
+        await db.cards.update(card.id, { emoji });
+        n++;
+      }
+    }
+    return n;
   });
 }

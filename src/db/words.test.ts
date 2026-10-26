@@ -59,10 +59,23 @@ describe('decks and cards', () => {
     expect((await repo.getDeck(id1))?.starterId).toBe(s.id);
   });
 
+  it('fills emoji into starter cards added before emoji existed, without touching her own', async () => {
+    const s = STARTER_DECKS[0];
+    const deckId = await repo.addStarterDeck(s);
+    const [first, second] = await repo.listCards(deckId);
+    await db.cards.update(first.id, { emoji: undefined });
+    await db.cards.update(second.id, { emoji: '🙂' });
+    expect(await repo.backfillStarterEmoji(STARTER_DECKS)).toBe(1);
+    const [a, b] = await repo.listCards(deckId);
+    expect(a.emoji).toBe(s.cards[0].emoji);
+    expect(b.emoji).toBe('🙂');
+    expect(await repo.backfillStarterEmoji(STARTER_DECKS)).toBe(0);
+  });
+
   it('starter decks are complete and have no duplicate terms', () => {
     for (const s of STARTER_DECKS) {
       expect(['work', 'daily', 'office', 'free']).toContain(s.context);
-      for (const c of s.cards) expect(c.term && c.definition && c.example).toBeTruthy();
+      for (const c of s.cards) expect(c.term && c.definition && c.example && c.emoji).toBeTruthy();
       expect(new Set(s.cards.map((c) => c.term.toLowerCase())).size).toBe(s.cards.length);
     }
   });
