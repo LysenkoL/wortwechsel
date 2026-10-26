@@ -185,8 +185,8 @@ h1 { background: var(--grad); -webkit-background-clip: text; background-clip: te
 .deck-head h1 { margin-bottom: var(--s1); overflow-wrap: anywhere; }
 .deck-head p { margin-bottom: var(--s1); }
 
-.emoji-pick { display: grid; grid-template-columns: repeat(8, 1fr); gap: var(--s1); }
-.emoji-btn { min-height: 40px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); font-size: 1.2rem; }
+.emoji-pick { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: var(--s1); }
+.emoji-btn { min-width: 0; padding: 0; min-height: 40px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); font-size: 1.2rem; }
 .emoji-btn[aria-pressed='true'] { border-color: var(--accent); background: var(--accent-soft); }
 
 .options-row { margin-bottom: var(--s3); }
@@ -288,3 +288,4 @@ h1 { background: var(--grad); -webkit-background-clip: text; background-clip: te
 .btn.rate-3 { background: var(--good); color: #fff; border-color: var(--good); }
 .btn.rate-4 { color: var(--accent-2); border: 2px solid var(--accent-2); }
 @media (prefers-reduced-motion: reduce) { .tile.wrong { animation: none; } }
+input[aria-invalid='true'] { border-color: var(--bad); }

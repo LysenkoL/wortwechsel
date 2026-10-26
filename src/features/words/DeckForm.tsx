@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { DeckInput } from '../../db/repo';
 import type { Context } from '../../db/types';
 import { ru, ruContext, ruWords } from '../../i18n/ru';
@@ -18,15 +18,38 @@ export function DeckForm({ initial, submitLabel, onSubmit, onCancel }: Props) {
   const [emoji, setEmoji] = useState(initial?.emoji ?? '📘');
   const [context, setContext] = useState<Context>(initial?.context ?? 'work');
   const [description, setDescription] = useState(initial?.description ?? '');
+  const [missingTitle, setMissingTitle] = useState(false);
+  const titleInput = useRef<HTMLInputElement>(null);
+
+  function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!title.trim()) {
+      // The title field may be scrolled away on a phone: say so and bring it back.
+      setMissingTitle(true);
+      titleInput.current?.focus();
+      titleInput.current?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      return;
+    }
+    void onSubmit({ title, emoji, context, description });
+  }
 
   return (
     <form
       className="card"
-      onSubmit={(e) => { e.preventDefault(); if (title.trim()) void onSubmit({ title, emoji, context, description }); }}
+      onSubmit={submit}
     >
       <div className="field">
         <label htmlFor="deck-title">{ruWords.deckTitle}</label>
-        <input id="deck-title" type="text" value={title} placeholder={ruWords.deckTitlePh} onChange={(e) => setTitle(e.target.value)} />
+        <input
+          ref={titleInput}
+          id="deck-title"
+          type="text"
+          value={title}
+          placeholder={ruWords.deckTitlePh}
+          aria-invalid={missingTitle}
+          onChange={(e) => { setTitle(e.target.value); setMissingTitle(false); }}
+        />
+        {missingTitle && <p className="error small" role="alert">{ruWords.deckTitleMissing}</p>}
       </div>
       <div className="field">
         <span className="label">{ruWords.deckTopic}</span>
@@ -49,7 +72,7 @@ export function DeckForm({ initial, submitLabel, onSubmit, onCancel }: Props) {
         <textarea id="deck-desc" value={description} placeholder={ruWords.deckDescriptionPh} onChange={(e) => setDescription(e.target.value)} />
       </div>
       <div className="row">
-        <button type="submit" className="btn primary" disabled={!title.trim()}>{submitLabel}</button>
+        <button type="submit" className="btn primary">{submitLabel}</button>
         {onCancel && <button type="button" className="btn" onClick={onCancel}>{ru.common.cancel}</button>}
       </div>
     </form>

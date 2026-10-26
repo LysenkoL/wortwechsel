@@ -187,6 +187,7 @@ export const ruWords = {
   // deck form
   deckTitle: 'Название',
   deckTitlePh: 'Например: Совещания на работе',
+  deckTitleMissing: 'Сначала введи название набора.',
   deckEmoji: 'Значок',
   deckTopic: 'Тема',
   deckDescription: 'Описание (необязательно)',
