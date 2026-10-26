@@ -18,6 +18,7 @@ export function describeAiError(e: unknown): DescribedError {
     case 'BLOCKED': return { text: ruAiError.blocked, toSettings: false, retryable: false };
     case 'BAD_REQUEST':
       return { text: ruAiError.badRequest, detail: e instanceof AiError ? e.detail : undefined, toSettings: true, retryable: false };
+    case 'TIMEOUT': return { text: ruAiError.timeout, toSettings: false, retryable: true };
     default: {
       if (e instanceof AiError && code === 'NETWORK' && /^HTTP 5\d\d$/.test(e.detail ?? '')) {
         return { text: ruAiError.busy, detail: e.detail, toSettings: false, retryable: true };

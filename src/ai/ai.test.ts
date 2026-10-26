@@ -56,7 +56,7 @@ describe('analyze', () => {
   it('uses the model from settings, else the default', async () => {
     fetchMock.mockImplementation(() => respond(geminiBody(A[0].output)));
     await analyze(req);
-    expect(String(fetchMock.mock.calls[0][0])).toContain('/models/gemini-flash-latest:');
+    expect(String(fetchMock.mock.calls[0][0])).toContain('/models/gemini-3.5-flash-lite:');
     await setSetting('analyzeModel', 'my-model');
     await analyze(req);
     expect(String(fetchMock.mock.calls[1][0])).toContain('/models/my-model:');
@@ -194,7 +194,7 @@ describe('evaluate', () => {
     fetchMock.mockReturnValueOnce(respond(geminiBody(E[1].output)));
     const r: EvaluateResponse = await evaluate(baseReq);
     expect(r.targets.map((t) => t.id)).toEqual(['t1', 't2']);
-    expect(String(fetchMock.mock.calls[0][0])).toContain('/models/gemini-flash-lite-latest:');
+    expect(String(fetchMock.mock.calls[0][0])).toContain('/models/gemini-3.1-flash-lite:');
     expect(bodyOf().systemInstruction.parts[0].text).toBe(EVALUATE_PROMPT);
     expect(await getSetting('evaluateModel', '')).toBe('');
     expect(await getUsage(localDay(new Date()), localDay(new Date()))).toMatchObject([{ analyze: 0, evaluate: 1 }]);
