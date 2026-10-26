@@ -76,3 +76,24 @@ export async function generateStructured(req: StructuredRequest): Promise<unknow
     throw new AiError('BAD_RESPONSE', 'answer is not JSON');
   }
 }
+
+/** Model ids this key may call with generateContent (used by the Settings check). */
+export async function listModels(apiKey: string, signal: AbortSignal): Promise<string[]> {
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE}/models?pageSize=200`, { headers: { 'x-goog-api-key': apiKey }, signal });
+  } catch (e) {
+    throw new AiError(signal.aborted ? 'TIMEOUT' : 'NETWORK', e instanceof Error ? e.message.slice(0, 120) : '');
+  }
+  if (!res.ok) {
+    const message = await readErrorMessage(res);
+    if (res.status === 400 || res.status === 401 || res.status === 403) throw new AiError('BAD_KEY', `HTTP ${res.status} ${message}`);
+    if (res.status === 429) throw new AiError('QUOTA', message);
+    throw new AiError('NETWORK', `HTTP ${res.status}`);
+  }
+  const data = (await res.json()) as { models?: { name?: string; supportedGenerationMethods?: string[] }[] };
+  return (data.models ?? [])
+    .filter((m) => m.supportedGenerationMethods?.includes('generateContent'))
+    .map((m) => (m.name ?? '').replace(/^models\//, ''))
+    .filter(Boolean);
+}

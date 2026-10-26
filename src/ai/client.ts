@@ -5,7 +5,7 @@ import {
 } from './contracts.generated';
 import { DEFAULT_ANALYZE_MODEL, DEFAULT_EVALUATE_MODEL, REQUEST_TIMEOUT_MS } from './defaults';
 import { AiError } from './errors';
-import { generateStructured } from './gemini';
+import { generateStructured, listModels } from './gemini';
 import { checkAnalyze, checkEvaluate } from './postprocess';
 import type { AnalyzeRequest, EvaluateRequest } from './types';
 import { getSetting, incrementUsage } from '../db/repo';
@@ -96,4 +96,40 @@ export async function evaluate(req: EvaluateRequest): Promise<EvaluateResponse> 
   );
   await incrementUsage('evaluate');
   return result;
+}
+
+export interface DiagnosisStep { ok: boolean; label: string; ms: number; detail?: string }
+
+/** Settings "Проверить": key → model availability → one real analysis, each step timed. */
+export async function diagnose(): Promise<DiagnosisStep[]> {
+  const steps: DiagnosisStep[] = [];
+  const apiKey = (await getSetting<string>('apiKey', '')).trim();
+  if (!apiKey) throw new AiError('NO_KEY');
+  const model = (await getSetting<string>('analyzeModel', '')).trim() || DEFAULT_ANALYZE_MODEL;
+
+  let t = performance.now();
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 15_000);
+  let models: string[];
+  try {
+    models = await listModels(apiKey, controller.signal);
+  } catch (e) {
+    steps.push({ ok: false, label: 'key', ms: performance.now() - t, detail: e instanceof AiError ? `${e.code} ${e.detail ?? ''}` : String(e) });
+    return steps;
+  } finally {
+    clearTimeout(timer);
+  }
+  steps.push({ ok: true, label: 'key', ms: performance.now() - t });
+  const flash = models.filter((m) => /flash/.test(m) && !/image|tts|audio|live/.test(m));
+  steps.push({ ok: models.includes(model), label: 'model', ms: 0, detail: models.includes(model) ? model : `${model} — нет. Есть: ${flash.slice(0, 8).join(', ')}` });
+  if (!models.includes(model)) return steps;
+
+  t = performance.now();
+  try {
+    await analyze({ transcript: 'Ich mache das morgen.', context: 'free' });
+    steps.push({ ok: true, label: 'analyze', ms: performance.now() - t });
+  } catch (e) {
+    steps.push({ ok: false, label: 'analyze', ms: performance.now() - t, detail: e instanceof AiError ? `${e.code} ${e.detail ?? ''}` : String(e) });
+  }
+  return steps;
 }

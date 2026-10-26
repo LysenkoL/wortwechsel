@@ -16,6 +16,7 @@ const BASE = process.env.BASE_PATH ?? '/wortwechsel/';
 
 export default defineConfig(async ({ mode }) => ({
   base: BASE,
+  define: { __BUILD_TIME__: JSON.stringify(new Date().toISOString()) },
   plugins: [
     react(),
     ...(await phoneHttps(mode)),

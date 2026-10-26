@@ -4,4 +4,4 @@
 // so they answer fast. Pin another name in Settings if Google retires these. Checked: 2026-10-26.
 export const DEFAULT_ANALYZE_MODEL = 'gemini-3.5-flash-lite'; // quality matters more
 export const DEFAULT_EVALUATE_MODEL = 'gemini-3.1-flash-lite'; // called more often, larger free quota
-export const REQUEST_TIMEOUT_MS = 30_000;
+export const REQUEST_TIMEOUT_MS = 45_000;

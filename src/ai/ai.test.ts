@@ -1,8 +1,9 @@
+import { REQUEST_TIMEOUT_MS } from './defaults';
 import { db } from '../db/db';
 import { getSetting, getUsage, setSetting } from '../db/repo';
 import { localDay } from '../srs/scheduler';
 import { ANALYZE_PROMPT, EVALUATE_PROMPT, type AnalyzeResponse, type EvaluateResponse } from './contracts.generated';
-import { analyze, evaluate } from './client';
+import { analyze, diagnose, evaluate } from './client';
 import { AiError } from './errors';
 import type { EvaluateRequest } from './types';
 
@@ -143,12 +144,12 @@ describe('analyze', () => {
     vi.restoreAllMocks();
   });
 
-  it('times out after 30 seconds', async () => {
+  it('times out after REQUEST_TIMEOUT_MS', async () => {
     vi.useFakeTimers();
     fetchMock.mockImplementationOnce((_u: string, init: RequestInit) =>
       new Promise((_res, rej) => init.signal!.addEventListener('abort', () => rej(new DOMException('aborted', 'AbortError')))));
     const p = analyze(req).catch((e) => e);
-    await vi.advanceTimersByTimeAsync(30_000);
+    await vi.advanceTimersByTimeAsync(REQUEST_TIMEOUT_MS);
     expect(await p).toMatchObject({ code: 'TIMEOUT' });
     vi.useRealTimers();
   });
@@ -233,5 +234,25 @@ describe('evaluate', () => {
   it('allows an empty sentence for transfer tasks', async () => {
     fetchMock.mockReturnValueOnce(respond(geminiBody(E[1].output)));
     await expect(evaluate({ ...baseReq, kind: 'transfer', sentence: '', topic: 'Arbeit' })).resolves.toBeDefined();
+  });
+});
+
+describe('diagnose', () => {
+  it('reports a missing model together with the available Flash models', async () => {
+    await setSetting('apiKey', 'k');
+    fetchMock.mockImplementation(() =>
+      respond({ models: [{ name: 'models/gemini-9-flash', supportedGenerationMethods: ['generateContent'] }] }),
+    );
+    const steps = await diagnose();
+    expect(steps.map((s) => [s.label, s.ok])).toEqual([['key', true], ['model', false]]);
+    expect(steps[1].detail).toContain('gemini-9-flash');
+  });
+
+  it('stops at the key step when Google rejects the key', async () => {
+    await setSetting('apiKey', 'k');
+    fetchMock.mockImplementation(() => respond({ error: { message: 'API key not valid' } }, 400));
+    const steps = await diagnose();
+    expect(steps).toHaveLength(1);
+    expect(steps[0]).toMatchObject({ label: 'key', ok: false });
   });
 });

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { analyze } from '../ai/client';
+import { diagnose, type DiagnosisStep } from '../ai/client';
 import { DEFAULT_ANALYZE_MODEL, DEFAULT_EVALUATE_MODEL } from '../ai/defaults';
 import { exportAll, getUsage, importAll, makeAllDueNow, setSetting } from '../db/repo';
 import { describeAiError } from '../features/aiErrorText';
@@ -18,6 +18,7 @@ function ApiKeySection() {
   const [visible, setVisible] = useState(false);
   const [status, setStatus] = useState<{ ok: boolean; text: string } | null>(null);
   const [busy, setBusy] = useState(false);
+  const [steps, setSteps] = useState<DiagnosisStep[]>([]);
   const value = draft ?? saved;
 
   async function save() {
@@ -32,8 +33,10 @@ function ApiKeySection() {
     try {
       await setSaved(value.trim());
       setDraft(null);
-      await analyze({ transcript: 'Ich mache das morgen.', context: 'free' });
-      setStatus({ ok: true, text: t.keyWorks });
+      setSteps([]);
+      const result = await diagnose();
+      setSteps(result);
+      if (result.every((r) => r.ok)) setStatus({ ok: true, text: t.keyWorks });
     } catch (e) {
       const d = describeAiError(e);
       setStatus({ ok: false, text: d.detail ? `${d.text} (${d.detail})` : d.text });
@@ -62,6 +65,17 @@ function ApiKeySection() {
           {busy ? t.testing : t.test}
         </button>
       </div>
+      {steps.length > 0 && (
+        <ul className="small diag">
+          {steps.map((st) => (
+            <li key={st.label}>
+              {st.ok ? '✅' : '❌'} {t.stepLabels[st.label] ?? st.label}
+              {st.ms > 0 && <span className="muted"> · {(st.ms / 1000).toFixed(1)} с</span>}
+              {st.detail && <div className="muted">{st.detail}</div>}
+            </li>
+          ))}
+        </ul>
+      )}
       {status && <p role="status" className={status.ok ? '' : 'error'}>{status.text}</p>}
       <details>
         <summary>{t.howToKey}</summary>
@@ -200,6 +214,18 @@ function UsageSection() {
   );
 }
 
+/** Drops the cached app (service worker + caches) and loads the newest version. Data in IndexedDB stays. */
+async function hardReload() {
+  try {
+    const regs = (await navigator.serviceWorker?.getRegistrations()) ?? [];
+    await Promise.all(regs.map((r) => r.unregister()));
+    const keys = (await caches?.keys()) ?? [];
+    await Promise.all(keys.map((k) => caches.delete(k)));
+  } finally {
+    window.location.reload();
+  }
+}
+
 export function SettingsPage() {
   const [limit, setLimit] = useSetting<number>('dailyReviewLimit', DEFAULT_DAILY_LIMIT);
   const [debugMsg, setDebugMsg] = useState(false);
@@ -219,6 +245,10 @@ export function SettingsPage() {
       <VoiceSection />
       <BackupSection />
       <UsageSection />
+      <section className="card">
+        <p className="small muted">{t.version}: {__BUILD_TIME__.slice(0, 16).replace('T', ' ')} UTC</p>
+        <button type="button" className="btn" onClick={hardReload}>{t.updateApp}</button>
+      </section>
       {debug && (
         <section className="card">
           <h2>{t.debug}</h2>

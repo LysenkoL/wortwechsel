@@ -137,3 +137,6 @@ h1 { background: var(--grad); -webkit-background-clip: text; background-clip: te
 .empty-emoji { font-size: 4rem; animation: float 3s ease-in-out infinite; }
 @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 .empty h2 { margin: var(--s3) 0 var(--s2); }
+
+.diag { list-style: none; padding: 0; margin: var(--s3) 0; }
+.diag li { margin-bottom: var(--s2); }

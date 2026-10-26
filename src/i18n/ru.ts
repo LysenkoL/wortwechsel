@@ -107,6 +107,9 @@ export const ruSettings = {
   test: 'Проверить',
   testing: 'Проверяю…',
   keyWorks: 'Ключ работает',
+  stepLabels: { key: 'Ключ принят Google', model: 'Модель доступна', analyze: 'Пробный анализ' } as Record<string, string>,
+  version: 'Версия',
+  updateApp: 'Обновить приложение',
   keySaved: 'Сохранено',
   howToKey: 'Как получить ключ',
   howToKeySteps: [
