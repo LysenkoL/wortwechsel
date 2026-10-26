@@ -11,7 +11,7 @@ import type { AnalyzeRequest, CardsRequest, EvaluateRequest } from './types';
 import { getSetting, incrementUsage } from '../db/repo';
 
 const MAX_TEXT = 600;
-export const MAX_CARDS = 30;
+export const MAX_CARDS = 50;
 
 /** Pause between attempts when Google answers 5xx ("overloaded"); tests set it to 0. */
 export const retryPolicy = { delayMs: 1500 };

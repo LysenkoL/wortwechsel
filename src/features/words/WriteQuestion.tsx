@@ -10,15 +10,31 @@ interface Props {
   onChecked?: (grade: Grade) => void;
 }
 
-/** Type the answer → tolerant check → feedback with "Я была права" → next. */
+/** After a right answer the next card comes by itself; a typo stays a little longer to read the spelling. */
+export const AUTO_NEXT_MS = { correct: 900, typo: 2000 } as const;
+
+/** Type the answer → tolerant check → right: next by itself; wrong: feedback with "Я была права" → next. */
 export function WriteQuestion({ expected, lang, onDone, onChecked }: Props) {
   const [value, setValue] = useState('');
   const [grade, setGrade] = useState<Grade | null>(null);
   const input = useRef<HTMLInputElement>(null);
   const nextBtn = useRef<HTMLButtonElement>(null);
 
+  const finished = useRef(false);
+  const finish = (ok: boolean) => {
+    if (finished.current) return;
+    finished.current = true;
+    onDone(ok);
+  };
+
   useEffect(() => { input.current?.focus(); }, []);
-  useEffect(() => { if (grade) nextBtn.current?.focus(); }, [grade]);
+  useEffect(() => {
+    if (!grade) return;
+    nextBtn.current?.focus();
+    if (grade.verdict !== 'correct' && grade.verdict !== 'typo') return;
+    const t = setTimeout(() => finish(true), AUTO_NEXT_MS[grade.verdict]);
+    return () => clearTimeout(t);
+  }, [grade]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function check(given: string) {
     const g = gradeAnswer(expected, given, lang);
@@ -35,9 +51,9 @@ export function WriteQuestion({ expected, lang, onDone, onChecked }: Props) {
         )}
         <p><span className="muted small">{ruWords.rightAnswer}: </span><strong lang={lang}>{expected}</strong></p>
         <div className="row">
-          <button ref={nextBtn} type="button" className="btn primary" onClick={() => onDone(grade.ok)}>{ruWords.next}</button>
+          <button ref={nextBtn} type="button" className="btn primary" onClick={() => finish(grade.ok)}>{ruWords.next}</button>
           {!grade.ok && value.trim() && (
-            <button type="button" className="btn" onClick={() => onDone(true)}>{ruWords.override}</button>
+            <button type="button" className="btn" onClick={() => finish(true)}>{ruWords.override}</button>
           )}
         </div>
       </div>

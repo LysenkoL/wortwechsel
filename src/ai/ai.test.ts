@@ -295,7 +295,7 @@ describe('generateCards', () => {
     const base = C[0].input;
     const bad = [
       { ...base, count: 0 },
-      { ...base, count: 31 },
+      { ...base, count: 51 },
       { ...base, topic: '' },
       { ...base, mode: 'complete', words: [] },
       { ...base, context: 'moon' },

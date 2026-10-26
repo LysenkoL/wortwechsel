@@ -1,18 +1,18 @@
 import { useState } from 'react';
-import { generateCards } from '../../ai/client';
+import { generateCards, MAX_CARDS } from '../../ai/client';
 import { ErrorNotice } from '../../components/ErrorNotice';
 import { addCards, updateCard } from '../../db/repo';
 import type { Deck, WordCard } from '../../db/types';
 import { ruWords } from '../../i18n/ru';
 import { describeAiError, type DescribedError } from '../aiErrorText';
 
-const COUNTS = [5, 10, 15, 20];
+const COUNTS = [10, 20, 30, 50];
 
 const topicOf = (deck: Deck) => [deck.title, deck.description].filter(Boolean).join('. ').slice(0, 600);
 
 /** "Слова на тему": new cards for the deck's topic. */
 export function AiTopicPanel({ deck, cards, onDone }: { deck: Deck; cards: WordCard[]; onDone: (msg: string) => void }) {
-  const [count, setCount] = useState(10);
+  const [count, setCount] = useState(20);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<DescribedError | null>(null);
 
@@ -54,7 +54,7 @@ export const incomplete = (cards: WordCard[]) => cards.filter((c) => !c.definiti
 
 /** "Дополнить": translation/example for her own words, without overwriting what she typed. */
 export async function completeCards(deck: Deck, cards: WordCard[]): Promise<number> {
-  const todo = incomplete(cards).slice(0, 30);
+  const todo = incomplete(cards).slice(0, MAX_CARDS);
   if (todo.length === 0) return 0;
   const res = await generateCards({
     mode: 'complete', topic: topicOf(deck), context: deck.context, count: todo.length,
