@@ -59,6 +59,17 @@ describe('WordsPage', () => {
     expect(screen.getByText(ruWords.reviewDue(12))).toBeInTheDocument();
   });
 
+  it('without a title it says so instead of silently doing nothing', async () => {
+    const user = userEvent.setup();
+    renderAt('/words');
+    await user.click(await screen.findByRole('button', { name: ruWords.newDeck }));
+    await user.type(screen.getByLabelText(ruWords.deckDescription), 'Filme');
+    await user.click(screen.getByRole('button', { name: ruWords.create }));
+    expect(screen.getByRole('alert')).toHaveTextContent(ruWords.deckTitleMissing);
+    expect(screen.getByLabelText(ruWords.deckTitle)).toHaveFocus();
+    expect(await repo.listDecks()).toHaveLength(0);
+  });
+
   it('creates a deck and opens it', async () => {
     const user = userEvent.setup();
     renderAt('/words');
