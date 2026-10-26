@@ -10,7 +10,7 @@ import { StudyPage } from './StudyPage';
 import { WordReviewPage } from './WordReviewPage';
 import { WordsPage } from './WordsPage';
 
-vi.mock('../ai/client', () => ({ generateCards: vi.fn() }));
+vi.mock('../ai/client', () => ({ generateCards: vi.fn(), MAX_CARDS: 50 }));
 import { generateCards } from '../ai/client';
 const generateMock = vi.mocked(generateCards);
 
@@ -104,7 +104,7 @@ describe('DeckPage', () => {
     await user.click(await screen.findByRole('button', { name: ruWords.aiTopic }));
     await user.click(screen.getByRole('button', { name: ruWords.aiGenerate }));
     expect(await screen.findByText('die Frist')).toBeInTheDocument();
-    expect(generateMock).toHaveBeenCalledWith(expect.objectContaining({ mode: 'topic', topic: 'Test', count: 10, exclude: ['der Termin'] }));
+    expect(generateMock).toHaveBeenCalledWith(expect.objectContaining({ mode: 'topic', topic: 'Test', count: 20, exclude: ['der Termin'] }));
   });
 
   it('AI: completes cards without translation, keeping what she typed', async () => {
@@ -146,6 +146,15 @@ describe('training modes', () => {
     await user.click(screen.getByRole('button', { name: ruWords.override }));
     expect(await screen.findByText(ruWords.scoreLine(1, 1))).toBeInTheDocument();
     expect((await repo.listCards(deckId))[0].stats).toMatchObject({ correct: 1, wrong: 0 });
+  });
+
+  it('write: a right answer goes on by itself, without "Дальше"', async () => {
+    const user = userEvent.setup();
+    const deckId = await seedDeck([FIVE[1]]);
+    renderAt(`/words/${deckId}/write`);
+    await user.type(await screen.findByLabelText(ruWords.answerDePh), 'die frist{enter}');
+    expect(screen.getByText(new RegExp(ruWords.verdict.correct))).toBeInTheDocument();
+    expect(await screen.findByText(ruWords.scoreLine(1, 1), {}, { timeout: 2000 })).toBeInTheDocument();
   });
 
   it('learn: a choice question first, the right option goes on', async () => {

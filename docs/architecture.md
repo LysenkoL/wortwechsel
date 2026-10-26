@@ -332,8 +332,8 @@ interface CardsRequest {
   mode: 'topic' | 'complete';   // новые слова на тему / дополнить её слова
   topic: string;                // название + описание набора
   context: Context;
-  count: number;                // 1–30
-  words: string[];              // complete: её слова (≤ 30)
+  count: number;                // 1–50
+  words: string[];              // complete: её слова (≤ 50)
   exclude: string[];            // термины набора (в запрос — последние 200)
 }
 ```

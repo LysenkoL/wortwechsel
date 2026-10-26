@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { RecordButton } from '../../../components/RecordButton';
 import { recordAnswer } from '../../../db/repo';
 import type { WordCard } from '../../../db/types';
@@ -8,6 +8,7 @@ import { askable } from '../../../words/questions';
 import { shuffle } from '../../../words/random';
 import { useSpeechRecognition } from '../../speech/useSpeechRecognition';
 import { StudyHeader } from '../StudyHeader';
+import { AUTO_NEXT_MS } from '../WriteQuestion';
 import { useSpeak } from '../useSpeak';
 import type { ModeProps } from './types';
 
@@ -34,8 +35,15 @@ export function SpeakMode({ cards, onExit }: ModeProps) {
     speak(card.term);
   }
 
+  // Right answer: give the spoken word time to finish, then go on by itself.
+  useEffect(() => {
+    if (!grade?.ok) return;
+    const t = setTimeout(() => next(true), AUTO_NEXT_MS[grade.verdict === 'typo' ? 'typo' : 'correct'] + 900);
+    return () => clearTimeout(t);
+  }, [grade]); // eslint-disable-line react-hooks/exhaustive-deps
+
   function next(ok: boolean) {
-    if (!card) return;
+    if (!card || !grade) return;
     void recordAnswer(card.id, 'speak', ok);
     if (ok) setOkCount((n) => n + 1);
     setGrade(null);
