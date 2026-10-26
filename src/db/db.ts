@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie';
-import type { Item, Review, Setting, UsageDay, Utterance } from './types';
+import type { Deck, Item, Review, Setting, UsageDay, Utterance, WordCard, WordLogEntry } from './types';
 
 export class WortwechselDB extends Dexie {
   utterances!: EntityTable<Utterance, 'id'>;
@@ -7,6 +7,9 @@ export class WortwechselDB extends Dexie {
   reviews!: EntityTable<Review, 'id'>;
   usage!: EntityTable<UsageDay, 'day'>;
   settings!: EntityTable<Setting, 'key'>;
+  decks!: EntityTable<Deck, 'id'>;
+  cards!: EntityTable<WordCard, 'id'>;
+  wordLog!: EntityTable<WordLogEntry, 'id'>;
 
   constructor(name = 'wortwechsel') {
     super(name);
@@ -16,6 +19,12 @@ export class WortwechselDB extends Dexie {
       reviews: 'id, reviewedAt, utteranceId',
       usage: 'day',
       settings: 'key',
+    });
+    // T14: word sets. Additive — no data migration needed.
+    this.version(2).stores({
+      decks: 'id, createdAt, context',
+      cards: 'id, deckId, due, sourceItemId',
+      wordLog: 'id, at, cardId, deckId',
     });
   }
 }

@@ -63,6 +63,7 @@ export interface UsageDay {
   day: string; // 'YYYY-MM-DD' local
   analyze: number;
   evaluate: number;
+  generate?: number; // AI word cards (added with T14)
 }
 
 export interface Setting {
@@ -75,11 +76,68 @@ export interface DueGroup {
   items: Item[];
 }
 
-export interface ExportFile {
+// ---------- word sets (T14) ----------
+
+export interface Deck {
+  id: string;
+  createdAt: number;
+  updatedAt: number;
+  title: string;
+  emoji: string;
+  context: Context; // topic group on the "Слова" screen
+  description: string;
+  starterId: string | null; // id from data/starter-decks.json
+  bestMatchMs: number | null; // record of the "Подбор" game
+}
+
+export interface CardStats {
+  seen: number;
+  correct: number;
+  wrong: number;
+  streak: number; // correct answers in a row (any mode)
+  lastAt: number | null;
+}
+
+export interface WordCard {
+  id: string;
+  deckId: string;
+  createdAt: number;
+  term: string; // German: "der Antrag", "einen Termin vereinbaren"
+  definition: string; // Russian
+  example: string; // German sentence or ''
+  note: string; // free note or ''
+  starred: boolean;
+  sourceItemId: string | null; // Item it was copied from
+  stats: CardStats;
+  card: SerializedCard; // FSRS, used only by the "Повторение" mode
+  due: number;
+}
+
+export type StudyMode = 'flashcards' | 'learn' | 'write' | 'listen' | 'speak' | 'test' | 'match' | 'review';
+
+export interface WordLogEntry {
+  id: string;
+  cardId: string;
+  deckId: string;
+  at: number;
+  mode: StudyMode;
+  correct: boolean;
+  rating: Rating | null; // review mode only
+  wasNew: boolean; // review mode: first FSRS review of this card
+}
+
+export interface ExportFileV1 {
   app: 'wortwechsel';
   version: 1;
   exportedAt: number;
   utterances: Utterance[];
   items: Item[];
   reviews: Review[];
+}
+
+export interface ExportFile extends Omit<ExportFileV1, 'version'> {
+  version: 2;
+  decks: Deck[];
+  cards: WordCard[];
+  wordLog: WordLogEntry[];
 }

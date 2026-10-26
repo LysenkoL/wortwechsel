@@ -1,6 +1,6 @@
 // All user-facing UI text lives here (rule: no literals in components).
 export const ru = {
-  nav: { speak: 'Говорить', review: 'Повторить', expressions: 'Выражения', settings: 'Настройки' },
+  nav: { speak: 'Говорить', review: 'Повторить', words: 'Слова', expressions: 'Выражения', settings: 'Настройки' },
   common: { back: 'Назад', cancel: 'Отмена', delete: 'Удалить', confirm: 'Подтвердить', loading: 'Загрузка…' },
 } as const;
 
@@ -133,10 +133,11 @@ export const ruSettings = {
   replaceAll: 'Заменить всё',
   merge: 'Объединить',
   restoreHint: 'Выбери режим для файла:',
-  restored: (u: number, i: number) => `Импортировано: ${u} фраз, ${i} выражений`,
+  restored: (u: number, i: number, c: number) => `Импортировано: ${u} фраз, ${i} выражений, ${c} карточек`,
   usage: 'Использование',
-  usageToday: (a: number, e: number) => `Сегодня: анализ ${a}, проверка ${e}`,
-  usageMonth: (a: number, e: number) => `За месяц: анализ ${a}, проверка ${e}`,
+  usageToday: (a: number, e: number, g: number) => `Сегодня: анализ ${a}, проверка ${e}, слова ${g}`,
+  usageMonth: (a: number, e: number, g: number) => `За месяц: анализ ${a}, проверка ${e}, слова ${g}`,
+  wordsNewPerDay: 'Новых слов в день (повторение)',
   usageNote: 'Точные бесплатные лимиты видны в Google AI Studio.',
   debug: 'Отладка',
   makeDue: 'Сделать всё доступным сейчас',
@@ -163,3 +164,170 @@ export const ruUi = {
   emptyExprText: 'Сохрани замены после разбора фразы — они появятся в этой копилке.',
   goSpeak: 'Сказать фразу',
 } as const;
+
+export const ruWords = {
+  title: 'Слова',
+  all: 'Все',
+  newDeck: '+ Новый набор',
+  deckCount: (n: number) => `${n} ${plural(n, 'карточка', 'карточки', 'карточек')}`,
+  emptyTitle: 'Здесь будут наборы слов',
+  emptyText: 'Создай набор по теме или добавь готовый — и тренируй слова как в Quizlet.',
+  starters: 'Готовые наборы',
+  startersHint: 'Связки уровня B2 — можно сразу учить, без AI.',
+  addStarter: 'Добавить',
+  reviewTitle: 'Повторение по расписанию',
+  reviewDue: (n: number) => (n === 0 ? 'На сегодня слов для повторения нет.' : `Сегодня: ${n} ${plural(n, 'слово', 'слова', 'слов')}`),
+  reviewStart: 'Повторить',
+  today: (answers: number, correct: number) => `Сегодня ответов: ${answers}, верно: ${correct}`,
+  streak: (d: number) => `Серия: ${d} ${plural(d, 'день', 'дня', 'дней')} 🔥`,
+  mastery: { new: 'не изучено', learning: 'учу', known: 'знаю' },
+  notFound: 'Набор не найден.',
+  toWords: 'К наборам',
+
+  // deck form
+  deckTitle: 'Название',
+  deckTitlePh: 'Например: Совещания на работе',
+  deckEmoji: 'Значок',
+  deckTopic: 'Тема',
+  deckDescription: 'Описание (необязательно)',
+  deckDescriptionPh: 'О чём этот набор — AI учтёт это при подборе слов',
+  create: 'Создать',
+  save: 'Сохранить',
+  edit: 'Изменить',
+
+  // deck page
+  modes: 'Тренировки',
+  direction: 'Спрашивать',
+  dir: { 'ru-de': 'рус → нем', 'de-ru': 'нем → рус' },
+  starredOnly: (n: number) => `только ★ (${n})`,
+  mode: {
+    flashcards: 'Карточки', learn: 'Заучивание', write: 'Письмо', listen: 'Аудирование',
+    speak: 'Говорение', test: 'Тест', match: 'Подбор', review: 'Повторение',
+  },
+  modeHint: {
+    flashcards: 'Переверни и оцени себя',
+    learn: 'Выбор, потом письмо',
+    write: 'Напиши перевод',
+    listen: 'Услышь и напиши',
+    speak: 'Скажи по-немецки',
+    test: 'Проверь себя на оценку',
+    match: 'Найди пары на время',
+    review: 'Интервальное (FSRS)',
+  },
+  modeEmoji: { flashcards: '🃏', learn: '🎯', write: '✍️', listen: '🎧', speak: '🎙️', test: '📝', match: '🧩', review: '🔁' },
+  needCards: 'Добавь хотя бы 2 карточки с переводом.',
+  bestMatch: (s: string) => `Рекорд: ${s} с`,
+  cards: (n: number) => `Карточки (${n})`,
+  addCard: '+ Карточка',
+  importList: 'Импорт списком',
+  aiTopic: '✨ Слова на тему',
+  aiComplete: (n: number) => `✨ Дополнить (${n})`,
+  fromExpressions: 'Из моих выражений',
+  term: 'Немецкий',
+  termPh: 'der Antrag / einen Antrag stellen',
+  definition: 'Перевод',
+  definitionPh: 'заявление / подать заявление',
+  example: 'Пример (необязательно)',
+  note: 'Заметка (необязательно)',
+  add: 'Добавить',
+  added: (n: number) => (n === 0 ? 'Ничего не добавлено — такие слова уже есть.' : `Добавлено: ${n}`),
+  importHelp: 'Одна строка — одна карточка: «термин — перевод» или через Tab, «;», « - », « = ». Третья часть — пример. Без перевода — потом нажми «Дополнить».',
+  importPh: 'der Antrag — заявление\nsich kümmern um — заботиться\nBescheid geben; сообщить; Gib mir Bescheid!',
+  importPreview: (n: number) => `Распознано карточек: ${n}`,
+  aiCount: 'Сколько слов',
+  aiGenerate: 'Подобрать',
+  aiGenerating: 'Подбираю…',
+  aiHint: 'Тема — название и описание набора. Повторов не будет.',
+  aiCompleting: 'Дополняю…',
+  fromExprEmpty: 'Все сохранённые выражения уже в этом наборе.',
+  selectAll: 'Выбрать все',
+  addSelected: (n: number) => `Добавить (${n})`,
+  star: 'В избранное',
+  unstar: 'Убрать из избранного',
+  listen: 'Прослушать',
+  remove: 'Удалить',
+  confirmRemove: 'Да, удалить',
+  resetProgress: 'Сбросить прогресс',
+  resetDone: 'Прогресс набора сброшен.',
+  deleteDeck: 'Удалить набор',
+  confirmDeleteDeck: 'Удалить набор со всеми карточками?',
+  noCards: 'В наборе пока нет карточек.',
+
+  // study (shared)
+  exit: '✕ Выйти',
+  progress: (i: number, n: number) => `${i} / ${n}`,
+  check: 'Проверить',
+  dontKnow: 'Не знаю',
+  next: 'Дальше',
+  answerPh: 'Ответ',
+  answerDePh: 'Ответ по-немецки',
+  answerRuPh: 'Ответ по-русски',
+  verdict: { correct: 'Верно!', typo: 'Верно, но с опечаткой', article: 'Почти: проверь артикль', wrong: 'Неверно' },
+  rightAnswer: 'Правильно',
+  yourAnswer: 'Твой ответ',
+  override: 'Я была права',
+  again: 'Ещё раз',
+  restart: 'Заново',
+  backToDeck: 'К набору',
+
+  // flashcards
+  tapToFlip: 'Нажми, чтобы перевернуть',
+  know: 'Знаю',
+  stillLearning: 'Ещё учу',
+  swipeHint: '← ещё учу · знаю →',
+  fcDone: (k: number, l: number) => `Знаю: ${k} · Ещё учу: ${l}`,
+  repeatUnknown: (n: number) => `Повторить незнакомые (${n})`,
+
+  // learn
+  round: (n: number) => `Раунд ${n}`,
+  learned: (k: number, n: number) => `Выучено ${k} из ${n}`,
+  roundDone: 'Раунд пройден',
+  continue: 'Продолжить',
+  learnDone: 'Все карточки выучены! 🎉',
+  chooseRight: 'Выбери правильный перевод',
+  writeIt: 'Напиши',
+
+  // listen / speak
+  play: '🔊 Ещё раз',
+  showHint: 'Подсказка',
+  sayIt: 'Скажи по-немецки:',
+  recognized: 'Распознано (можно поправить)',
+
+  // test
+  testSetup: 'Настрой тест',
+  questions: 'Вопросов',
+  allQuestions: 'все',
+  types: 'Типы вопросов',
+  type: { mc: 'Выбор', write: 'Письмо', tf: 'Верно / неверно' },
+  start: 'Начать',
+  isItRight: 'Это правильный перевод?',
+  yes: 'Верно',
+  no: 'Неверно',
+  score: (p: number) => `${p}%`,
+  scoreLine: (ok: number, n: number) => `Правильно ${ok} из ${n}`,
+  mistakes: 'Ошибки',
+  noMistakes: 'Без единой ошибки!',
+  newTest: 'Новый тест',
+  skipped: '(нет ответа)',
+
+  // match
+  matchIntro: 'Соедини немецкие слова с переводом как можно быстрее. Ошибка — +1 секунда.',
+  matchTime: (s: string) => `${s} с`,
+  matchDone: (s: string) => `Готово за ${s} с`,
+  newRecord: 'Новый рекорд! 🏆',
+
+  // review
+  showAnswer: 'Показать ответ',
+  ratings: { 1: 'Снова', 2: 'Трудно', 3: 'Хорошо', 4: 'Легко' } as Record<1 | 2 | 3 | 4, string>,
+  reviewNothing: 'На сегодня всё повторено.',
+  reviewDone: (n: number) => `Повторено слов: ${n}`,
+  reviewAllDecks: 'Все наборы',
+} as const;
+
+function plural(n: number, one: string, few: string, many: string): string {
+  const m10 = n % 10;
+  const m100 = n % 100;
+  if (m10 === 1 && m100 !== 11) return one;
+  if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return few;
+  return many;
+}

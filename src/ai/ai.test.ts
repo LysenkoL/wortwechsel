@@ -2,8 +2,9 @@ import { REQUEST_TIMEOUT_MS } from './defaults';
 import { db } from '../db/db';
 import { getSetting, getUsage, setSetting } from '../db/repo';
 import { localDay } from '../srs/scheduler';
-import { ANALYZE_PROMPT, EVALUATE_PROMPT, type AnalyzeResponse, type EvaluateResponse } from './contracts.generated';
-import { analyze, diagnose, evaluate } from './client';
+import { ANALYZE_PROMPT, CARDS_PROMPT, EVALUATE_PROMPT, type AnalyzeResponse, type EvaluateResponse } from './contracts.generated';
+import { analyze, diagnose, evaluate, generateCards } from './client';
+import { checkCards } from './postprocess';
 import { AiError } from './errors';
 import type { EvaluateRequest } from './types';
 
@@ -17,6 +18,7 @@ const examples = (prompt: string) => {
 };
 const A = examples(ANALYZE_PROMPT);
 const E = examples(EVALUATE_PROMPT);
+const C = examples(CARDS_PROMPT);
 
 const geminiBody = (obj: unknown, finishReason = 'STOP') =>
   ({ candidates: [{ finishReason, content: { parts: [{ text: JSON.stringify(obj) }] } }] });
@@ -254,5 +256,52 @@ describe('diagnose', () => {
     const steps = await diagnose();
     expect(steps).toHaveLength(1);
     expect(steps[0]).toMatchObject({ label: 'key', ok: false });
+  });
+});
+
+describe('generateCards', () => {
+  it('prompt examples pass the schema and the post-processing', () => {
+    expect(C).toHaveLength(2);
+    for (const ex of C) expect(checkCards(ex.output, ex.input).cards).toHaveLength(ex.input.count);
+  });
+
+  it('sends the cards prompt with the analyze model and counts usage as "generate"', async () => {
+    fetchMock.mockReturnValueOnce(respond(geminiBody(C[0].output)));
+    const res = await generateCards(C[0].input);
+    expect(res.cards[0].term).toBe('einen Antrag stellen');
+    expect(bodyOf().systemInstruction.parts[0].text).toBe(CARDS_PROMPT);
+    expect(JSON.parse(bodyOf().contents[0].parts[0].text)).toEqual(C[0].input);
+    expect(String(fetchMock.mock.calls[0][0])).toContain('/models/gemini-3.5-flash-lite:');
+    const [day] = await getUsage(localDay(new Date()), localDay(new Date()));
+    expect(day).toMatchObject({ generate: 1, analyze: 0 });
+  });
+
+  it('topic mode: drops duplicates and terms already in the deck, caps at count', () => {
+    const raw = { cards: [
+      { term: ' der Termin ', definition_ru: 'встреча', example_de: 'x', note_ru: '' },
+      { term: 'die Frist', definition_ru: 'срок', example_de: 'x', note_ru: '' },
+      { term: 'Die Frist', definition_ru: 'срок', example_de: 'x', note_ru: '' },
+      { term: '', definition_ru: '', example_de: '', note_ru: '' },
+      { term: 'der Bescheid', definition_ru: 'решение', example_de: 'x', note_ru: '' },
+      { term: 'die Kaution', definition_ru: 'залог', example_de: 'x', note_ru: '' },
+    ] };
+    const r = checkCards(raw, { mode: 'topic', count: 2, exclude: ['Der Termin'] });
+    expect(r.cards.map((c) => c.term)).toEqual(['die Frist', 'der Bescheid']);
+    expect(() => checkCards({ cards: [] }, { mode: 'topic', count: 2, exclude: [] })).toThrow(AiError);
+    expect(() => checkCards({ cards: [{ term: 'x' }] }, { mode: 'topic', count: 2, exclude: [] })).toThrow(AiError);
+  });
+
+  it('rejects bad input without a network call', async () => {
+    const base = C[0].input;
+    const bad = [
+      { ...base, count: 0 },
+      { ...base, count: 31 },
+      { ...base, topic: '' },
+      { ...base, mode: 'complete', words: [] },
+      { ...base, context: 'moon' },
+      { ...base, words: [''] },
+    ];
+    for (const b of bad) await expect(generateCards(b)).rejects.toMatchObject({ code: 'BAD_REQUEST' });
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

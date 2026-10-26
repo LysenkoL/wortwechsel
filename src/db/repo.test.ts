@@ -180,7 +180,7 @@ describe('export / import', () => {
 
     await Promise.all([db.utterances.clear(), db.items.clear(), db.reviews.clear()]);
     const counts = await repo.importAll(JSON.parse(JSON.stringify(file)), 'replace');
-    expect(counts).toEqual({ utterances: 1, items: 1, reviews: 1 });
+    expect(counts).toEqual({ utterances: 1, items: 1, reviews: 1, decks: 0, cards: 0 });
     expect(await repo.exportAll(D(22))).toEqual(file);
   });
 

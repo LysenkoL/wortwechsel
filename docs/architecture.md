@@ -89,7 +89,7 @@ wortwechsel/
 
 Так промпт и схема меняются в одном месте, а код получает их автоматически.
 
-## 4. Модель данных (Dexie, база `wortwechsel`, версия 1)
+## 4. Модель данных (Dexie, база `wortwechsel`, версия 1; версия 2 — §4a)
 
 ```ts
 type Context  = 'work' | 'daily' | 'office' | 'free'; // office = Behörde/Amt
@@ -141,7 +141,8 @@ interface Setting  { key: string; value: unknown; }
 ```
 
 Ключи настроек: `apiKey`, `analyzeModel`, `evaluateModel`,
-`dailyReviewLimit`, `ttsVoice`, `ttsRate`, `lastContext`, `lastExportAt`.
+`dailyReviewLimit`, `ttsVoice`, `ttsRate`, `lastContext`, `lastExportAt`,
+`wordsNewPerDay`, `wordsDirection` (T14).
 
 Индексы Dexie:
 
@@ -156,7 +157,67 @@ db.version(1).stores({
 ```
 
 Все обращения к БД — только через `src/db/repo.ts`. Компоненты Dexie напрямую
-не трогают.
+не трогают. (Функции наборов слов лежат в `src/db/words.ts` и реэкспортируются
+из `repo.ts` — компоненты импортируют их из `repo.ts`.)
+
+## 4a. Наборы слов (T14, Dexie версия 2)
+
+Отдельный модуль «как Quizlet» рядом с ядром (D-021). Таблицы добавлены без
+миграции данных:
+
+```ts
+db.version(2).stores({
+  decks:   'id, createdAt, context',
+  cards:   'id, deckId, due, sourceItemId',
+  wordLog: 'id, at, cardId, deckId',
+});
+
+interface Deck {
+  id; createdAt; updatedAt; title; emoji;
+  context: Context;          // тема набора = те же 4 сферы (группировка на экране)
+  description: string;
+  starterId: string | null;  // id из data/starter-decks.json
+  bestMatchMs: number | null;
+}
+interface WordCard {
+  id; deckId; createdAt;
+  term: string;              // нем.: "der Antrag", "einen Antrag stellen"
+  definition: string;        // рус.
+  example: string; note: string; starred: boolean;
+  sourceItemId: string | null;            // Item, из которого скопирована
+  stats: { seen; correct; wrong; streak; lastAt };   // все режимы
+  card: SerializedCard; due: number;      // FSRS — только режим «Повторение»
+}
+interface WordLogEntry { id; cardId; deckId; at; mode: StudyMode; correct; rating: Rating | null; wasNew: boolean }
+```
+
+**Два вида прогресса (D-022).**
+- *Освоение* (`stats`) — пишется любым режимом. «Знаю» = 2 верных ответа
+  подряд (`KNOWN_STREAK`), одна ошибка — обратно в «учу». Полоска на наборе.
+- *Интервальное повторение* (`card`, FSRS с теми же параметрами, что §5) —
+  только режим «Повторение» с самооценкой Снова/Трудно/Хорошо/Легко. Новая
+  карточка доступна сразу (`freshCard`, без «завтра 04:00»). Очередь:
+  все `reps > 0 && due <= now` + новые до `wordsNewPerDay` в день (по
+  умолчанию 15; считаются по `wordLog.wasNew`). «Снова» в сессии ставит
+  карточку в конец ещё раз, но в FSRS идёт только первая оценка.
+
+**Проверка ответов — локально, без AI (D-023)** — `src/words/grade.ts`:
+регистр, пунктуация, `ß/ss`, `ä/ae`, `jdm./etw.` и скобки не важны;
+1 опечатка при длине ≥ 4 и 2 при ≥ 9 — «верно, с опечаткой»; неверный или
+пропущенный артикль — отдельный вердикт `article` (не засчитывается).
+Русский ответ — любой из синонимов через запятую. Кнопка «Я была права»
+засчитывает ответ. Говорение — тот же разбор в режиме `lenient`
+(вокруг слова могут быть другие слова).
+
+**Режимы** (`src/features/words/modes/`, логика в `src/words/`): Карточки,
+Заучивание (`learn.ts`: раунды по 7, выбор → письмо), Письмо, Аудирование,
+Говорение, Тест (`questions.ts`: выбор / письмо / верно-неверно), Подбор
+(`match.ts`: 6 пар, +1 с за ошибку), Повторение. Направление
+`ru-de` (по умолчанию, активный словарь) или `de-ru` — настройка `wordsDirection`.
+
+**Резервная копия version 2** = version 1 + `decks`, `cards`, `wordLog`.
+Файлы version 1 импортируются. Слияние: набор — по `updatedAt`, карточка —
+по `max(createdAt, stats.lastAt, card.last_review)`, журнал — по `id`.
 
 ## 5. Интервальное повторение (src/srs)
 
@@ -260,6 +321,25 @@ Google рекомендует значение по умолчанию). Мож�
 - analyze: обрезка `suggestions` до 3, `keep` до 2, `grammar_notes` до 2;
 - evaluate: каждый `id` из запроса ровно один раз, порядок — как в запросе;
   иначе `BAD_RESPONSE`.
+- cards: обрезка пробелов, пустые `term` выброшены; `topic` — без повторов
+  (между собой и с `exclude`), не больше `count`; пустой результат — `BAD_RESPONSE`.
+
+### Карточки для наборов (`generateCards`, T14)
+
+```ts
+generateCards(req: CardsRequest): Promise<CardsResponse>
+interface CardsRequest {
+  mode: 'topic' | 'complete';   // новые слова на тему / дополнить её слова
+  topic: string;                // название + описание набора
+  context: Context;
+  count: number;                // 1–30
+  words: string[];              // complete: её слова (≤ 30)
+  exclude: string[];            // термины набора (в запрос — последние 200)
+}
+```
+Промпт `prompts/cards.md`, схема `schemas/cards.schema.json`, модель —
+`analyzeModel`, счётчик — `usage.generate`. «Дополнить» не затирает то, что
+Лена ввела сама: берёт из ответа только пустые поля.
 
 ## 7. Конфигурация
 
@@ -285,7 +365,10 @@ GEMINI_MODEL=
 ## 8. Клиент
 
 - **Навигация (нижняя панель):** Говорить · Повторить (бейдж с числом) ·
-  Выражения · Настройки.
+  Слова (бейдж — слова к повторению) · Выражения · Настройки.
+- **Маршруты «Слова»:** `/words` (наборы по темам + готовые наборы),
+  `/words/:deckId` (набор), `/words/:deckId/:mode?dir=…&starred=1`
+  (тренировка), `/words/review?deck=…` (повторение, всех или одного набора).
 - **Тексты интерфейса** — только из `src/i18n/ru.ts`.
 - **Распознавание речи** — хук `useSpeechRecognition()`:
   - `window.SpeechRecognition || window.webkitSpeechRecognition`;

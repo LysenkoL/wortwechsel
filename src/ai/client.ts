@@ -1,16 +1,17 @@
 // Screens call only analyze() and evaluate(). All network access lives in src/ai/.
 import {
-  ANALYZE_PROMPT, ANALYZE_SCHEMA, EVALUATE_PROMPT, EVALUATE_SCHEMA,
-  type AnalyzeResponse, type EvaluateResponse,
+  ANALYZE_PROMPT, ANALYZE_SCHEMA, CARDS_PROMPT, CARDS_SCHEMA, EVALUATE_PROMPT, EVALUATE_SCHEMA,
+  type AnalyzeResponse, type CardsResponse, type EvaluateResponse,
 } from './contracts.generated';
 import { DEFAULT_ANALYZE_MODEL, DEFAULT_EVALUATE_MODEL, REQUEST_TIMEOUT_MS } from './defaults';
 import { AiError } from './errors';
 import { generateStructured, listModels } from './gemini';
-import { checkAnalyze, checkEvaluate } from './postprocess';
-import type { AnalyzeRequest, EvaluateRequest } from './types';
+import { checkAnalyze, checkCards, checkEvaluate } from './postprocess';
+import type { AnalyzeRequest, CardsRequest, EvaluateRequest } from './types';
 import { getSetting, incrementUsage } from '../db/repo';
 
 const MAX_TEXT = 600;
+export const MAX_CARDS = 30;
 
 /** Pause between attempts when Google answers 5xx ("overloaded"); tests set it to 0. */
 export const retryPolicy = { delayMs: 1500 };
@@ -36,6 +37,19 @@ function validateEvaluateRequest(r: EvaluateRequest): void {
   if (!ok) throw new AiError('BAD_REQUEST', 'evaluate input');
 }
 
+function validateCardsRequest(r: CardsRequest): void {
+  const ok =
+    (r.mode === 'topic' || r.mode === 'complete') &&
+    CONTEXTS.includes(r.context) &&
+    Number.isInteger(r.count) && r.count >= 1 && r.count <= MAX_CARDS &&
+    textOk(r.topic, r.mode === 'complete') &&
+    Array.isArray(r.words) && r.words.length <= MAX_CARDS && r.words.every((w) => textOk(w)) &&
+    (r.mode === 'topic' || r.words.length >= 1) &&
+    Array.isArray(r.exclude) && r.exclude.length <= 500;
+  if (!ok) throw new AiError('BAD_REQUEST', 'cards input');
+}
+
+/** `kind` names the model setting: `analyzeModel` or `evaluateModel`. */
 async function call(
   kind: 'analyze' | 'evaluate',
   systemPrompt: string,
@@ -95,6 +109,18 @@ export async function evaluate(req: EvaluateRequest): Promise<EvaluateResponse> 
     checkEvaluate(await call('evaluate', EVALUATE_PROMPT, EVALUATE_SCHEMA, userText, DEFAULT_EVALUATE_MODEL), req),
   );
   await incrementUsage('evaluate');
+  return result;
+}
+
+/** Word cards for a deck: new ones on a topic, or translations/examples for her own words. */
+export async function generateCards(req: CardsRequest): Promise<CardsResponse> {
+  validateCardsRequest(req);
+  // The deck's own terms are only used for "no duplicates" — the newest 200 are enough.
+  const body = { ...req, exclude: req.exclude.slice(-200) };
+  const result = await withOneRetry(async () =>
+    checkCards(await call('analyze', CARDS_PROMPT, CARDS_SCHEMA, JSON.stringify(body), DEFAULT_ANALYZE_MODEL), req),
+  );
+  await incrementUsage('generate');
   return result;
 }
 
