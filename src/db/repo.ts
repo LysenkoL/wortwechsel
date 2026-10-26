@@ -4,8 +4,10 @@ import { rateTarget } from '../srs/rating';
 import { localDay, newCard, reviewCard } from '../srs/scheduler';
 import { db } from './db';
 import type {
-  Context, DueGroup, ExportFile, Item, Rating, Review, Stage, Utterance,
+  Context, DueGroup, ExportFile, ExportFileV1, Item, Rating, Review, Stage, Utterance, WordCard,
 } from './types';
+
+export * from './words';
 
 const ACTIVE_AFTER_DAYS = 3;
 const id = () => crypto.randomUUID();
@@ -210,39 +212,62 @@ export async function makeAllDueNow(now: Date = new Date()): Promise<void> {
 
 export async function exportAll(now: Date = new Date()): Promise<ExportFile> {
   // Settings (and therefore the API key) are intentionally NOT exported.
-  const [utterances, items, reviews] = await Promise.all([
+  const [utterances, items, reviews, decks, cards, wordLog] = await Promise.all([
     db.utterances.toArray(), db.items.toArray(), db.reviews.toArray(),
+    db.decks.toArray(), db.cards.toArray(), db.wordLog.toArray(),
   ]);
-  return { app: 'wortwechsel', version: 1, exportedAt: now.getTime(), utterances, items, reviews };
+  return { app: 'wortwechsel', version: 2, exportedAt: now.getTime(), utterances, items, reviews, decks, cards, wordLog };
 }
 
 export class ImportError extends Error {}
 
-function assertExportFile(file: unknown): asserts file is ExportFile {
-  const f = file as Partial<ExportFile> | null;
-  if (!f || f.app !== 'wortwechsel' || f.version !== 1) {
+/** Accepts backup version 1 (before word sets) and 2; returns a version-2 shape. */
+function readExportFile(file: unknown): ExportFile {
+  const f = file as Partial<ExportFile> | Partial<ExportFileV1> | null;
+  if (!f || f.app !== 'wortwechsel' || (f.version !== 1 && f.version !== 2)) {
     throw new ImportError('Это не файл резервной копии Wortwechsel.');
   }
   if (!Array.isArray(f.utterances) || !Array.isArray(f.items) || !Array.isArray(f.reviews)) {
     throw new ImportError('Файл повреждён: нет списков фраз, выражений или повторений.');
   }
+  if (f.version === 1) return { ...(f as ExportFileV1), version: 2, decks: [], cards: [], wordLog: [] };
+  const v2 = f as Partial<ExportFile>;
+  if (!Array.isArray(v2.decks) || !Array.isArray(v2.cards) || !Array.isArray(v2.wordLog)) {
+    throw new ImportError('Файл повреждён: нет списков наборов или карточек.');
+  }
+  return v2 as ExportFile;
 }
 
 const itemUpdatedAt = (i: Item) => Math.max(i.createdAt, i.card.last_review ?? 0);
+const cardUpdatedAt = (c: WordCard) => Math.max(c.createdAt, c.stats.lastAt ?? 0, c.card.last_review ?? 0);
 
 export async function importAll(
-  file: unknown,
+  raw: unknown,
   mode: 'replace' | 'merge',
-): Promise<{ utterances: number; items: number; reviews: number }> {
-  assertExportFile(file);
-  await db.transaction('rw', db.utterances, db.items, db.reviews, async () => {
+): Promise<{ utterances: number; items: number; reviews: number; decks: number; cards: number }> {
+  const file = readExportFile(raw);
+  const tables = [db.utterances, db.items, db.reviews, db.decks, db.cards, db.wordLog];
+  await db.transaction('rw', tables, async () => {
     if (mode === 'replace') {
-      await Promise.all([db.utterances.clear(), db.items.clear(), db.reviews.clear()]);
+      await Promise.all(tables.map((t) => t.clear()));
       await db.utterances.bulkPut(file.utterances);
       await db.items.bulkPut(file.items);
       await db.reviews.bulkPut(file.reviews);
+      await db.decks.bulkPut(file.decks);
+      await db.cards.bulkPut(file.cards);
+      await db.wordLog.bulkPut(file.wordLog);
       return;
     }
+    for (const d of file.decks) {
+      const cur = await db.decks.get(d.id);
+      if (!cur || d.updatedAt > cur.updatedAt) await db.decks.put(d);
+    }
+    for (const c of file.cards) {
+      const cur = await db.cards.get(c.id);
+      if (!cur || cardUpdatedAt(c) > cardUpdatedAt(cur)) await db.cards.put(c);
+    }
+    const knownLog = new Set((await db.wordLog.toArray()).map((e) => e.id));
+    await db.wordLog.bulkPut(file.wordLog.filter((e) => !knownLog.has(e.id)));
     for (const u of file.utterances) {
       const cur = await db.utterances.get(u.id);
       if (!cur || u.createdAt > cur.createdAt) await db.utterances.put(u);
@@ -256,16 +281,19 @@ export async function importAll(
       if (!cur || r.reviewedAt > cur.reviewedAt) await db.reviews.put(r);
     }
   });
-  return { utterances: file.utterances.length, items: file.items.length, reviews: file.reviews.length };
+  return {
+    utterances: file.utterances.length, items: file.items.length, reviews: file.reviews.length,
+    decks: file.decks.length, cards: file.cards.length,
+  };
 }
 
 // ---------- usage & settings ----------
 
-export async function incrementUsage(kind: 'analyze' | 'evaluate', now: Date = new Date()): Promise<void> {
+export async function incrementUsage(kind: 'analyze' | 'evaluate' | 'generate', now: Date = new Date()): Promise<void> {
   const day = localDay(now);
   await db.transaction('rw', db.usage, async () => {
     const cur = (await db.usage.get(day)) ?? { day, analyze: 0, evaluate: 0 };
-    cur[kind] += 1;
+    cur[kind] = (cur[kind] ?? 0) + 1;
     await db.usage.put(cur);
   });
 }

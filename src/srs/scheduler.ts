@@ -52,6 +52,11 @@ export function newCard(now: Date): SerializedCard {
   return { ...card, due: firstDueAfterSave(now) };
 }
 
+/** A new card that is due immediately (word sets: a new word can be studied right away). */
+export function freshCard(now: Date): SerializedCard {
+  return serializeCard(createEmptyCard(now));
+}
+
 export function reviewCard(card: SerializedCard, now: Date, rating: Rating): SerializedCard {
   const result = scheduler.next(deserializeCard(card), now, rating as Grade);
   return serializeCard(result.card);

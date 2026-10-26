@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { diagnose, type DiagnosisStep } from '../ai/client';
 import { DEFAULT_ANALYZE_MODEL, DEFAULT_EVALUATE_MODEL } from '../ai/defaults';
-import { exportAll, getUsage, importAll, makeAllDueNow, setSetting } from '../db/repo';
+import { DEFAULT_NEW_PER_DAY, exportAll, getUsage, importAll, makeAllDueNow, setSetting } from '../db/repo';
 import { describeAiError } from '../features/aiErrorText';
 import { DEFAULT_DAILY_LIMIT } from '../features/review/useDueCount';
 import { germanVoices, speakGerman } from '../features/speech/tts';
@@ -11,6 +11,7 @@ import { ruSettings as t } from '../i18n/ru';
 import { localDay } from '../srs/scheduler';
 
 const LIMITS = [10, 20, 30, 50];
+const NEW_WORDS = [5, 10, 15, 20, 30, 50];
 
 function ApiKeySection() {
   const [saved, setSaved] = useSetting<string>('apiKey', '');
@@ -166,7 +167,7 @@ function BackupSection() {
   async function restore(mode: 'replace' | 'merge') {
     try {
       const r = await importAll(restoreFile, mode);
-      setMessage({ ok: true, text: t.restored(r.utterances, r.items) });
+      setMessage({ ok: true, text: t.restored(r.utterances, r.items, r.cards) });
     } catch (e) {
       setMessage({ ok: false, text: e instanceof Error ? e.message : 'Ошибка импорта.' });
     } finally {
@@ -202,13 +203,13 @@ function UsageSection() {
   const today = localDay(now);
   const monthStart = `${today.slice(0, 8)}01`;
   const rows = useLiveQuery(() => getUsage(monthStart, today), [monthStart, today]) ?? [];
-  const sum = (kind: 'analyze' | 'evaluate', only?: string) =>
-    rows.filter((r) => !only || r.day === only).reduce((n, r) => n + r[kind], 0);
+  const sum = (kind: 'analyze' | 'evaluate' | 'generate', only?: string) =>
+    rows.filter((r) => !only || r.day === only).reduce((n, r) => n + (r[kind] ?? 0), 0);
   return (
     <section className="card">
       <h2>{t.usage}</h2>
-      <p>{t.usageToday(sum('analyze', today), sum('evaluate', today))}</p>
-      <p>{t.usageMonth(sum('analyze'), sum('evaluate'))}</p>
+      <p>{t.usageToday(sum('analyze', today), sum('evaluate', today), sum('generate', today))}</p>
+      <p>{t.usageMonth(sum('analyze'), sum('evaluate'), sum('generate'))}</p>
       <p className="muted small">{t.usageNote}</p>
     </section>
   );
@@ -228,6 +229,7 @@ async function hardReload() {
 
 export function SettingsPage() {
   const [limit, setLimit] = useSetting<number>('dailyReviewLimit', DEFAULT_DAILY_LIMIT);
+  const [newWords, setNewWords] = useSetting<number>('wordsNewPerDay', DEFAULT_NEW_PER_DAY);
   const [debugMsg, setDebugMsg] = useState(false);
   const debug = new URLSearchParams(window.location.search).get('debug') === '1';
 
@@ -240,6 +242,12 @@ export function SettingsPage() {
         <h2>{t.dailyLimit}</h2>
         <select aria-label={t.dailyLimit} value={limit} onChange={(e) => setLimit(Number(e.target.value))}>
           {LIMITS.map((n) => <option key={n} value={n}>{n}</option>)}
+        </select>
+      </section>
+      <section className="card">
+        <h2>{t.wordsNewPerDay}</h2>
+        <select aria-label={t.wordsNewPerDay} value={newWords} onChange={(e) => setNewWords(Number(e.target.value))}>
+          {NEW_WORDS.map((n) => <option key={n} value={n}>{n}</option>)}
         </select>
       </section>
       <VoiceSection />

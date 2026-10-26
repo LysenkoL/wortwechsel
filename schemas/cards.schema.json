@@ -1,0 +1,30 @@
+{
+  "title": "CardsResponse",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["cards"],
+  "properties": {
+    "cards": {
+      "type": "array",
+      "description": "topic: до count новых карточек по теме. complete: ровно по одной на каждое слово из words, в том же порядке.",
+      "items": {
+        "title": "GeneratedCard",
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["term", "definition_ru", "example_de", "note_ru"],
+        "properties": {
+          "term": {
+            "type": "string",
+            "description": "Немецкий: существительное с артиклем, глагол — в типичной связке (einen Antrag stellen)."
+          },
+          "definition_ru": { "type": "string", "description": "Перевод, 1–5 слов; синонимы через запятую." },
+          "example_de": { "type": "string", "description": "Короткое живое предложение с term (до 12 слов)." },
+          "note_ru": {
+            "type": "string",
+            "description": "Мн. число, управление или стиль — коротко; пустая строка, если нечего добавить."
+          }
+        }
+      }
+    }
+  }
+}
