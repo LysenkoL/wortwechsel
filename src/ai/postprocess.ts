@@ -40,6 +40,17 @@ export function checkEvaluate(raw: unknown, request: Pick<EvaluateRequest, 'targ
   };
 }
 
+/** Keeps at most 2 pictographic emoji (with their modifiers); letters, digits and flags are dropped. */
+export function onlyEmoji(s: string): string {
+  const seg = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+  const out: string[] = [];
+  for (const { segment } of seg.segment(s)) {
+    if (/\p{Extended_Pictographic}/u.test(segment) && !/\p{Regional_Indicator}/u.test(segment)) out.push(segment);
+    if (out.length === 2) break;
+  }
+  return out.join('');
+}
+
 /**
  * Cards: trimmed, empty terms dropped. topic: no duplicates (with each other and `exclude`),
  * at most `count`. complete: one card per word is expected, so the list is only capped.
@@ -51,6 +62,7 @@ export function checkCards(raw: unknown, request: Pick<CardsRequest, 'mode' | 'c
   for (const c of raw.cards) {
     const card = {
       term: c.term.trim(), definition_ru: c.definition_ru.trim(), example_de: c.example_de.trim(), note_ru: c.note_ru.trim(),
+      emoji: onlyEmoji(c.emoji),
     };
     const key = card.term.toLowerCase();
     if (!key) continue;

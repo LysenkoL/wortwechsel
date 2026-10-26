@@ -3,6 +3,7 @@ import { recordAnswer, reviewWord } from '../../../db/repo';
 import type { Rating, WordCard } from '../../../db/types';
 import { ruWords } from '../../../i18n/ru';
 import type { Direction } from '../../../words/questions';
+import { CardEmoji } from '../CardEmoji';
 import { StudyHeader } from '../StudyHeader';
 import { useSpeak } from '../useSpeak';
 
@@ -55,7 +56,7 @@ export function Review({ queue: initial, direction, onExit }: Props) {
   return (
     <section className="page">
       <StudyHeader title={ruWords.mode.review} index={idx} total={queue.length} onExit={onExit} />
-      <div className="prompt-card big" lang={frontDe ? 'de' : 'ru'}>{frontDe ? card.term : card.definition}</div>
+      <div className="prompt-card big" lang={frontDe ? 'de' : 'ru'}><CardEmoji card={card} size="lg" />{frontDe ? card.term : card.definition}</div>
       {!shown ? (
         <button type="button" className="btn primary block" onClick={() => { setShown(true); speak(card.term); }}>{ruWords.showAnswer}</button>
       ) : (

@@ -6,6 +6,7 @@ import {
 } from '../../../words/learn';
 import { answerLang, answerOf, askable, choices, promptOf } from '../../../words/questions';
 import { ChoiceQuestion } from '../ChoiceQuestion';
+import { CardEmoji } from '../CardEmoji';
 import { StudyHeader } from '../StudyHeader';
 import { useSpeak } from '../useSpeak';
 import { WriteQuestion } from '../WriteQuestion';
@@ -83,6 +84,7 @@ export function Learn({ cards, direction, onExit }: ModeProps) {
       {bar}
       <p className="muted small">{q.step === 'mc' ? ruWords.chooseRight : ruWords.writeIt}</p>
       <div className="prompt-card" lang={direction === 'ru-de' ? 'ru' : 'de'}>
+        <CardEmoji card={card} />
         {prompt}
         {direction === 'de-ru' && (
           <button type="button" className="btn icon-btn inline-icon" aria-label={ruWords.listen} onClick={() => speak(card.term)}>🔊</button>

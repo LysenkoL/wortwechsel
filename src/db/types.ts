@@ -106,6 +106,7 @@ export interface WordCard {
   definition: string; // Russian
   example: string; // German sentence or ''
   note: string; // free note or ''
+  emoji?: string; // 1–2 association emoji or '' (absent on cards from before this field)
   starred: boolean;
   sourceItemId: string | null; // Item it was copied from
   stats: CardStats;

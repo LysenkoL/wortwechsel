@@ -1,4 +1,7 @@
+import { useEffect } from 'react';
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { backfillStarterEmoji } from './db/repo';
+import { STARTER_DECKS } from './words/starters';
 import { TopBar } from './components/TopBar';
 import { NavBar } from './components/NavBar';
 import { useDueCount } from './features/review/useDueCount';
@@ -15,6 +18,7 @@ import { useWordsDue } from './features/words/useWordsDue';
 function Shell() {
   const due = useDueCount();
   const wordsDue = useWordsDue();
+  useEffect(() => { void backfillStarterEmoji(STARTER_DECKS); }, []);
   return (
     <div className="app">
       <TopBar due={due} />

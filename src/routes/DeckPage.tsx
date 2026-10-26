@@ -9,6 +9,7 @@ import {
 import type { StudyMode, WordCard } from '../db/types';
 import { describeAiError, type DescribedError } from '../features/aiErrorText';
 import { AiTopicPanel, completeCards, incomplete } from '../features/words/AiPanel';
+import { CardEmoji } from '../features/words/CardEmoji';
 import { CardForm } from '../features/words/CardForm';
 import { DeckForm } from '../features/words/DeckForm';
 import { FromExpressions } from '../features/words/FromExpressions';
@@ -35,7 +36,7 @@ function CardRow({ card }: { card: WordCard }) {
         submitLabel={ruWords.save}
         onCancel={() => setEditing(false)}
         onSubmit={async (v) => {
-          await updateCard(card.id, { term: v.term, definition: v.definition, example: v.example ?? '', note: v.note ?? '' });
+          await updateCard(card.id, { term: v.term, definition: v.definition, example: v.example ?? '', note: v.note ?? '', emoji: v.emoji ?? '' });
           setEditing(false);
         }}
       />
@@ -47,7 +48,7 @@ function CardRow({ card }: { card: WordCard }) {
       <div className="word-main">
         <span className={`dot m-${masteryOf(card.stats)}`} aria-label={ruWords.mastery[masteryOf(card.stats)]} />
         <div>
-          <p className="word-term" lang="de">{card.term}</p>
+          <p className="word-term" lang="de"><CardEmoji card={card} size="sm" /> {card.term}</p>
           <p className="word-def">{card.definition || <span className="muted">—</span>}</p>
           {card.example && <p className="small muted" lang="de"><em>{card.example}</em></p>}
           {card.note && <p className="small muted">{card.note}</p>}

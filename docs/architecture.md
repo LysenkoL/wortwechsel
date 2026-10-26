@@ -184,6 +184,7 @@ interface WordCard {
   term: string;              // нем.: "der Antrag", "einen Antrag stellen"
   definition: string;        // рус.
   example: string; note: string; starred: boolean;
+  emoji?: string;            // 1–2 эмодзи-ассоциации ('' или нет у старых карточек)
   sourceItemId: string | null;            // Item, из которого скопирована
   stats: { seen; correct; wrong; streak; lastAt };   // все режимы
   card: SerializedCard; due: number;      // FSRS — только режим «Повторение»
@@ -338,7 +339,8 @@ interface CardsRequest {
 }
 ```
 Промпт `prompts/cards.md`, схема `schemas/cards.schema.json`, модель —
-`analyzeModel`, счётчик — `usage.generate`. «Дополнить» не затирает то, что
+`analyzeModel`, счётчик — `usage.generate`. Поле `emoji` чистится
+`onlyEmoji()` (≤ 2 эмодзи, без букв и флагов). «Дополнить» не затирает то, что
 Лена ввела сама: берёт из ответа только пустые поля.
 
 ## 7. Конфигурация

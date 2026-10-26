@@ -7,7 +7,7 @@ import { sample, shuffle, type Rng } from './random';
 export type Direction = 'ru-de' | 'de-ru';
 export type QuestionType = 'mc' | 'write' | 'tf';
 
-export type StudyCard = Pick<WordCard, 'id' | 'term' | 'definition' | 'example' | 'note'>;
+export type StudyCard = Pick<WordCard, 'id' | 'term' | 'definition' | 'example' | 'note' | 'emoji'>;
 
 export const promptOf = (c: StudyCard, d: Direction) => (d === 'ru-de' ? c.definition : c.term);
 export const answerOf = (c: StudyCard, d: Direction) => (d === 'ru-de' ? c.term : c.definition);

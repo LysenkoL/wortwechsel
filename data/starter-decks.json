@@ -6,18 +6,90 @@
     "context": "work",
     "description": "Как договориться, перенести, взять на себя и подвести итог.",
     "cards": [
-      { "term": "einen Termin vereinbaren", "definition": "договориться о встрече", "example": "Lass uns für nächste Woche einen Termin vereinbaren.", "note": "" },
-      { "term": "sich (mit jdm.) abstimmen", "definition": "согласовать, согласоваться", "example": "Ich stimme mich noch kurz mit dem Team ab.", "note": "sich über etw. abstimmen — о чём" },
-      { "term": "Bescheid geben", "definition": "сообщить, дать знать", "example": "Gib mir bitte Bescheid, wenn du fertig bist.", "note": "jdm. Bescheid geben / sagen" },
-      { "term": "etw. verschieben", "definition": "перенести (на другое время)", "example": "Wir müssen das Meeting auf Freitag verschieben.", "note": "" },
-      { "term": "die Frist einhalten", "definition": "уложиться в срок", "example": "Mit dem neuen Plan können wir die Frist einhalten.", "note": "мн. die Fristen" },
-      { "term": "etw. priorisieren", "definition": "расставить приоритеты", "example": "Wir sollten die Aufgaben für den Sprint neu priorisieren.", "note": "" },
-      { "term": "etw. vorschlagen", "definition": "предложить", "example": "Ich schlage vor, dass wir das Thema morgen besprechen.", "note": "jdm. etw. vorschlagen" },
-      { "term": "die Verantwortung übernehmen", "definition": "взять на себя ответственность", "example": "Ich übernehme die Verantwortung für das Release.", "note": "für etw." },
-      { "term": "sich um etw. kümmern", "definition": "заняться чем-л., позаботиться", "example": "Ich kümmere mich um die Dokumentation.", "note": "" },
-      { "term": "etw. zusammenfassen", "definition": "подвести итог, резюмировать", "example": "Kannst du die Ergebnisse kurz zusammenfassen?", "note": "" },
-      { "term": "eine Entscheidung treffen", "definition": "принять решение", "example": "Wir müssen bis Montag eine Entscheidung treffen.", "note": "" },
-      { "term": "auf etw. eingehen", "definition": "подробнее остановиться на чём-л.", "example": "Auf diesen Punkt gehe ich gleich noch ein.", "note": "" }
+      {
+        "term": "einen Termin vereinbaren",
+        "definition": "договориться о встрече",
+        "example": "Lass uns für nächste Woche einen Termin vereinbaren.",
+        "note": "",
+        "emoji": "📅🤝"
+      },
+      {
+        "term": "sich (mit jdm.) abstimmen",
+        "definition": "согласовать, согласоваться",
+        "example": "Ich stimme mich noch kurz mit dem Team ab.",
+        "note": "sich über etw. abstimmen — о чём",
+        "emoji": "🗣️🔄"
+      },
+      {
+        "term": "Bescheid geben",
+        "definition": "сообщить, дать знать",
+        "example": "Gib mir bitte Bescheid, wenn du fertig bist.",
+        "note": "jdm. Bescheid geben / sagen",
+        "emoji": "📣"
+      },
+      {
+        "term": "etw. verschieben",
+        "definition": "перенести (на другое время)",
+        "example": "Wir müssen das Meeting auf Freitag verschieben.",
+        "note": "",
+        "emoji": "⏩📅"
+      },
+      {
+        "term": "die Frist einhalten",
+        "definition": "уложиться в срок",
+        "example": "Mit dem neuen Plan können wir die Frist einhalten.",
+        "note": "мн. die Fristen",
+        "emoji": "⏰✅"
+      },
+      {
+        "term": "etw. priorisieren",
+        "definition": "расставить приоритеты",
+        "example": "Wir sollten die Aufgaben für den Sprint neu priorisieren.",
+        "note": "",
+        "emoji": "🔢"
+      },
+      {
+        "term": "etw. vorschlagen",
+        "definition": "предложить",
+        "example": "Ich schlage vor, dass wir das Thema morgen besprechen.",
+        "note": "jdm. etw. vorschlagen",
+        "emoji": "💡"
+      },
+      {
+        "term": "die Verantwortung übernehmen",
+        "definition": "взять на себя ответственность",
+        "example": "Ich übernehme die Verantwortung für das Release.",
+        "note": "für etw.",
+        "emoji": "🫡"
+      },
+      {
+        "term": "sich um etw. kümmern",
+        "definition": "заняться чем-л., позаботиться",
+        "example": "Ich kümmere mich um die Dokumentation.",
+        "note": "",
+        "emoji": "🤲"
+      },
+      {
+        "term": "etw. zusammenfassen",
+        "definition": "подвести итог, резюмировать",
+        "example": "Kannst du die Ergebnisse kurz zusammenfassen?",
+        "note": "",
+        "emoji": "📝"
+      },
+      {
+        "term": "eine Entscheidung treffen",
+        "definition": "принять решение",
+        "example": "Wir müssen bis Montag eine Entscheidung treffen.",
+        "note": "",
+        "emoji": "⚖️"
+      },
+      {
+        "term": "auf etw. eingehen",
+        "definition": "подробнее остановиться на чём-л.",
+        "example": "Auf diesen Punkt gehe ich gleich noch ein.",
+        "note": "",
+        "emoji": "🔍"
+      }
     ]
   },
   {
@@ -27,18 +99,90 @@
     "context": "office",
     "description": "Ведомства, бланки, сроки и официальные письма.",
     "cards": [
-      { "term": "einen Antrag stellen", "definition": "подать заявление", "example": "Ich habe den Antrag letzte Woche online gestellt.", "note": "мн. die Anträge" },
-      { "term": "etw. beantragen", "definition": "подать заявку на что-л.", "example": "Wir möchten Elterngeld beantragen.", "note": "" },
-      { "term": "die Unterlagen einreichen", "definition": "подать документы", "example": "Bitte reichen Sie die Unterlagen bis Freitag ein.", "note": "die Unterlagen — только мн.; офиц." },
-      { "term": "etw. nachreichen", "definition": "донести, дослать позже", "example": "Kann ich die Gehaltsnachweise nächste Woche nachreichen?", "note": "" },
-      { "term": "das Formular ausfüllen", "definition": "заполнить бланк", "example": "Füllen Sie bitte zuerst das Formular aus.", "note": "мн. die Formulare" },
-      { "term": "die Bescheinigung", "definition": "справка", "example": "Ich brauche eine Bescheinigung vom Arbeitgeber.", "note": "мн. die Bescheinigungen" },
-      { "term": "der Bescheid", "definition": "официальное решение (письмо)", "example": "Den Bescheid bekommen Sie per Post.", "note": "мн. die Bescheide" },
-      { "term": "Widerspruch einlegen", "definition": "обжаловать, подать возражение", "example": "Gegen den Bescheid kann man innerhalb eines Monats Widerspruch einlegen.", "note": "офиц." },
-      { "term": "für etw. zuständig sein", "definition": "отвечать за что-л. (по компетенции)", "example": "Welches Amt ist dafür zuständig?", "note": "" },
-      { "term": "sich anmelden", "definition": "зарегистрироваться по адресу", "example": "Nach dem Umzug muss man sich innerhalb von zwei Wochen anmelden.", "note": "die Anmeldung" },
-      { "term": "etw. beglaubigen lassen", "definition": "заверить (копию, документ)", "example": "Ich muss das Zeugnis noch beglaubigen lassen.", "note": "" },
-      { "term": "der Aufenthaltstitel", "definition": "вид на жительство", "example": "Mein Aufenthaltstitel läuft im Mai ab.", "note": "мн. die Aufenthaltstitel; офиц." }
+      {
+        "term": "einen Antrag stellen",
+        "definition": "подать заявление",
+        "example": "Ich habe den Antrag letzte Woche online gestellt.",
+        "note": "мн. die Anträge",
+        "emoji": "📝📨"
+      },
+      {
+        "term": "etw. beantragen",
+        "definition": "подать заявку на что-л.",
+        "example": "Wir möchten Elterngeld beantragen.",
+        "note": "",
+        "emoji": "🙋📄"
+      },
+      {
+        "term": "die Unterlagen einreichen",
+        "definition": "подать документы",
+        "example": "Bitte reichen Sie die Unterlagen bis Freitag ein.",
+        "note": "die Unterlagen — только мн.; офиц.",
+        "emoji": "📂➡️"
+      },
+      {
+        "term": "etw. nachreichen",
+        "definition": "донести, дослать позже",
+        "example": "Kann ich die Gehaltsnachweise nächste Woche nachreichen?",
+        "note": "",
+        "emoji": "📎⏳"
+      },
+      {
+        "term": "das Formular ausfüllen",
+        "definition": "заполнить бланк",
+        "example": "Füllen Sie bitte zuerst das Formular aus.",
+        "note": "мн. die Formulare",
+        "emoji": "✍️📋"
+      },
+      {
+        "term": "die Bescheinigung",
+        "definition": "справка",
+        "example": "Ich brauche eine Bescheinigung vom Arbeitgeber.",
+        "note": "мн. die Bescheinigungen",
+        "emoji": "📜"
+      },
+      {
+        "term": "der Bescheid",
+        "definition": "официальное решение (письмо)",
+        "example": "Den Bescheid bekommen Sie per Post.",
+        "note": "мн. die Bescheide",
+        "emoji": "📬"
+      },
+      {
+        "term": "Widerspruch einlegen",
+        "definition": "обжаловать, подать возражение",
+        "example": "Gegen den Bescheid kann man innerhalb eines Monats Widerspruch einlegen.",
+        "note": "офиц.",
+        "emoji": "✋📄"
+      },
+      {
+        "term": "für etw. zuständig sein",
+        "definition": "отвечать за что-л. (по компетенции)",
+        "example": "Welches Amt ist dafür zuständig?",
+        "note": "",
+        "emoji": "👩‍💼"
+      },
+      {
+        "term": "sich anmelden",
+        "definition": "зарегистрироваться по адресу",
+        "example": "Nach dem Umzug muss man sich innerhalb von zwei Wochen anmelden.",
+        "note": "die Anmeldung",
+        "emoji": "🏠📝"
+      },
+      {
+        "term": "etw. beglaubigen lassen",
+        "definition": "заверить (копию, документ)",
+        "example": "Ich muss das Zeugnis noch beglaubigen lassen.",
+        "note": "",
+        "emoji": "🖋️✅"
+      },
+      {
+        "term": "der Aufenthaltstitel",
+        "definition": "вид на жительство",
+        "example": "Mein Aufenthaltstitel läuft im Mai ab.",
+        "note": "мн. die Aufenthaltstitel; офиц.",
+        "emoji": "🪪"
+      }
     ]
   },
   {
@@ -48,18 +192,90 @@
     "context": "daily",
     "description": "Аренда, поломки, мастера и разговор с арендодателем.",
     "cards": [
-      { "term": "der Mietvertrag", "definition": "договор аренды", "example": "Laut Mietvertrag darf ich keine Haustiere halten.", "note": "мн. die Mietverträge" },
-      { "term": "die Nebenkosten", "definition": "коммунальные платежи", "example": "Die Nebenkosten sind dieses Jahr stark gestiegen.", "note": "только мн." },
-      { "term": "die Kaution", "definition": "залог (за квартиру)", "example": "Die Kaution bekomme ich nach dem Auszug zurück.", "note": "мн. die Kautionen" },
-      { "term": "der Vermieter", "definition": "арендодатель", "example": "Ich habe den Vermieter wegen der Heizung angerufen.", "note": "мн. die Vermieter; die Vermieterin" },
-      { "term": "einen Schaden melden", "definition": "сообщить о повреждении", "example": "Den Wasserschaden habe ich sofort gemeldet.", "note": "мн. die Schäden" },
-      { "term": "etw. reparieren lassen", "definition": "отдать в ремонт, вызвать мастера", "example": "Wir lassen die Waschmaschine reparieren.", "note": "" },
-      { "term": "der Handwerker", "definition": "мастер (сантехник, электрик…)", "example": "Der Handwerker kommt erst nächste Woche.", "note": "мн. die Handwerker" },
-      { "term": "ausfallen", "definition": "выйти из строя; отменяться", "example": "Bei uns ist schon wieder die Heizung ausgefallen.", "note": "ist ausgefallen" },
-      { "term": "tropfen", "definition": "капать, подтекать", "example": "Der Wasserhahn in der Küche tropft seit Tagen.", "note": "" },
-      { "term": "lüften", "definition": "проветривать", "example": "Im Winter sollte man kurz und kräftig lüften.", "note": "" },
-      { "term": "der Schimmel", "definition": "плесень", "example": "Im Bad hat sich Schimmel gebildet.", "note": "" },
-      { "term": "die Wohnung kündigen", "definition": "расторгнуть договор аренды", "example": "Ich habe die Wohnung zum Monatsende gekündigt.", "note": "или: den Mietvertrag kündigen" }
+      {
+        "term": "der Mietvertrag",
+        "definition": "договор аренды",
+        "example": "Laut Mietvertrag darf ich keine Haustiere halten.",
+        "note": "мн. die Mietverträge",
+        "emoji": "🏠📄"
+      },
+      {
+        "term": "die Nebenkosten",
+        "definition": "коммунальные платежи",
+        "example": "Die Nebenkosten sind dieses Jahr stark gestiegen.",
+        "note": "только мн.",
+        "emoji": "💡💧"
+      },
+      {
+        "term": "die Kaution",
+        "definition": "залог (за квартиру)",
+        "example": "Die Kaution bekomme ich nach dem Auszug zurück.",
+        "note": "мн. die Kautionen",
+        "emoji": "💰🔒"
+      },
+      {
+        "term": "der Vermieter",
+        "definition": "арендодатель",
+        "example": "Ich habe den Vermieter wegen der Heizung angerufen.",
+        "note": "мн. die Vermieter; die Vermieterin",
+        "emoji": "🔑"
+      },
+      {
+        "term": "einen Schaden melden",
+        "definition": "сообщить о повреждении",
+        "example": "Den Wasserschaden habe ich sofort gemeldet.",
+        "note": "мн. die Schäden",
+        "emoji": "💥📞"
+      },
+      {
+        "term": "etw. reparieren lassen",
+        "definition": "отдать в ремонт, вызвать мастера",
+        "example": "Wir lassen die Waschmaschine reparieren.",
+        "note": "",
+        "emoji": "🔧"
+      },
+      {
+        "term": "der Handwerker",
+        "definition": "мастер (сантехник, электрик…)",
+        "example": "Der Handwerker kommt erst nächste Woche.",
+        "note": "мн. die Handwerker",
+        "emoji": "👷"
+      },
+      {
+        "term": "ausfallen",
+        "definition": "выйти из строя; отменяться",
+        "example": "Bei uns ist schon wieder die Heizung ausgefallen.",
+        "note": "ist ausgefallen",
+        "emoji": "⚠️🔌"
+      },
+      {
+        "term": "tropfen",
+        "definition": "капать, подтекать",
+        "example": "Der Wasserhahn in der Küche tropft seit Tagen.",
+        "note": "",
+        "emoji": "💧"
+      },
+      {
+        "term": "lüften",
+        "definition": "проветривать",
+        "example": "Im Winter sollte man kurz und kräftig lüften.",
+        "note": "",
+        "emoji": "🪟🌬️"
+      },
+      {
+        "term": "der Schimmel",
+        "definition": "плесень",
+        "example": "Im Bad hat sich Schimmel gebildet.",
+        "note": "",
+        "emoji": "🦠"
+      },
+      {
+        "term": "die Wohnung kündigen",
+        "definition": "расторгнуть договор аренды",
+        "example": "Ich habe die Wohnung zum Monatsende gekündigt.",
+        "note": "или: den Mietvertrag kündigen",
+        "emoji": "🏠✂️"
+      }
     ]
   },
   {
@@ -69,18 +285,90 @@
     "context": "daily",
     "description": "Больничный, направления, рецепты и симптомы.",
     "cards": [
-      { "term": "sich krankmelden", "definition": "сообщить о болезни (на работе)", "example": "Ich habe mich heute Morgen krankgemeldet.", "note": "" },
-      { "term": "die Krankschreibung", "definition": "больничный лист", "example": "Die Krankschreibung schicke ich dir per E-Mail.", "note": "разг.; офиц. die Arbeitsunfähigkeitsbescheinigung" },
-      { "term": "die Überweisung", "definition": "направление (к специалисту)", "example": "Für den Facharzt brauche ich eine Überweisung.", "note": "мн. die Überweisungen; также «банковский перевод»" },
-      { "term": "etw. verschreiben", "definition": "выписать (лекарство)", "example": "Die Ärztin hat mir ein Antibiotikum verschrieben.", "note": "" },
-      { "term": "das Rezept", "definition": "рецепт", "example": "Mit dem Rezept gehe ich gleich in die Apotheke.", "note": "мн. die Rezepte" },
-      { "term": "Beschwerden haben", "definition": "иметь жалобы (симптомы)", "example": "Seit wann haben Sie die Beschwerden?", "note": "die Beschwerden — мн." },
-      { "term": "sich erkälten", "definition": "простудиться", "example": "Ich habe mich auf der Reise erkältet.", "note": "" },
-      { "term": "Fieber messen", "definition": "мерить температуру", "example": "Hast du schon Fieber gemessen?", "note": "" },
-      { "term": "die Nebenwirkung", "definition": "побочное действие", "example": "Das Medikament hat kaum Nebenwirkungen.", "note": "мн. die Nebenwirkungen" },
-      { "term": "sich impfen lassen", "definition": "сделать прививку", "example": "Ich lasse mich im Herbst gegen Grippe impfen.", "note": "" },
-      { "term": "der Befund", "definition": "результат обследования", "example": "Den Befund bespricht die Ärztin nächste Woche mit mir.", "note": "мн. die Befunde" },
-      { "term": "die Versichertenkarte", "definition": "карта медстраховки", "example": "Bitte bringen Sie Ihre Versichertenkarte mit.", "note": "мн. die Versichertenkarten" }
+      {
+        "term": "sich krankmelden",
+        "definition": "сообщить о болезни (на работе)",
+        "example": "Ich habe mich heute Morgen krankgemeldet.",
+        "note": "",
+        "emoji": "🤒📞"
+      },
+      {
+        "term": "die Krankschreibung",
+        "definition": "больничный лист",
+        "example": "Die Krankschreibung schicke ich dir per E-Mail.",
+        "note": "разг.; офиц. die Arbeitsunfähigkeitsbescheinigung",
+        "emoji": "📄🤒"
+      },
+      {
+        "term": "die Überweisung",
+        "definition": "направление (к специалисту)",
+        "example": "Für den Facharzt brauche ich eine Überweisung.",
+        "note": "мн. die Überweisungen; также «банковский перевод»",
+        "emoji": "👨‍⚕️➡️"
+      },
+      {
+        "term": "etw. verschreiben",
+        "definition": "выписать (лекарство)",
+        "example": "Die Ärztin hat mir ein Antibiotikum verschrieben.",
+        "note": "",
+        "emoji": "💊✍️"
+      },
+      {
+        "term": "das Rezept",
+        "definition": "рецепт",
+        "example": "Mit dem Rezept gehe ich gleich in die Apotheke.",
+        "note": "мн. die Rezepte",
+        "emoji": "🧾💊"
+      },
+      {
+        "term": "Beschwerden haben",
+        "definition": "иметь жалобы (симптомы)",
+        "example": "Seit wann haben Sie die Beschwerden?",
+        "note": "die Beschwerden — мн.",
+        "emoji": "😣"
+      },
+      {
+        "term": "sich erkälten",
+        "definition": "простудиться",
+        "example": "Ich habe mich auf der Reise erkältet.",
+        "note": "",
+        "emoji": "🤧"
+      },
+      {
+        "term": "Fieber messen",
+        "definition": "мерить температуру",
+        "example": "Hast du schon Fieber gemessen?",
+        "note": "",
+        "emoji": "🌡️"
+      },
+      {
+        "term": "die Nebenwirkung",
+        "definition": "побочное действие",
+        "example": "Das Medikament hat kaum Nebenwirkungen.",
+        "note": "мн. die Nebenwirkungen",
+        "emoji": "⚠️💊"
+      },
+      {
+        "term": "sich impfen lassen",
+        "definition": "сделать прививку",
+        "example": "Ich lasse mich im Herbst gegen Grippe impfen.",
+        "note": "",
+        "emoji": "💉"
+      },
+      {
+        "term": "der Befund",
+        "definition": "результат обследования",
+        "example": "Den Befund bespricht die Ärztin nächste Woche mit mir.",
+        "note": "мн. die Befunde",
+        "emoji": "🔬📋"
+      },
+      {
+        "term": "die Versichertenkarte",
+        "definition": "карта медстраховки",
+        "example": "Bitte bringen Sie Ihre Versichertenkarte mit.",
+        "note": "мн. die Versichertenkarten",
+        "emoji": "💳"
+      }
     ]
   }
 ]

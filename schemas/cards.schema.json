@@ -2,7 +2,9 @@
   "title": "CardsResponse",
   "type": "object",
   "additionalProperties": false,
-  "required": ["cards"],
+  "required": [
+    "cards"
+  ],
   "properties": {
     "cards": {
       "type": "array",
@@ -11,17 +13,33 @@
         "title": "GeneratedCard",
         "type": "object",
         "additionalProperties": false,
-        "required": ["term", "definition_ru", "example_de", "note_ru"],
+        "required": [
+          "term",
+          "definition_ru",
+          "example_de",
+          "note_ru",
+          "emoji"
+        ],
         "properties": {
           "term": {
             "type": "string",
             "description": "Немецкий: существительное с артиклем, глагол — в типичной связке (einen Antrag stellen)."
           },
-          "definition_ru": { "type": "string", "description": "Перевод, 1–5 слов; синонимы через запятую." },
-          "example_de": { "type": "string", "description": "Короткое живое предложение с term (до 12 слов)." },
+          "definition_ru": {
+            "type": "string",
+            "description": "Перевод, 1–5 слов; синонимы через запятую."
+          },
+          "example_de": {
+            "type": "string",
+            "description": "Короткое живое предложение с term (до 12 слов)."
+          },
           "note_ru": {
             "type": "string",
             "description": "Мн. число, управление или стиль — коротко; пустая строка, если нечего добавить."
+          },
+          "emoji": {
+            "type": "string",
+            "description": "1–2 эмодзи-ассоциации для запоминания (только эмодзи, без текста)."
           }
         }
       }

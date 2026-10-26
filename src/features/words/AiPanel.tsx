@@ -24,7 +24,7 @@ export function AiTopicPanel({ deck, cards, onDone }: { deck: Deck; cards: WordC
         mode: 'topic', topic: topicOf(deck), context: deck.context, count, words: [], exclude: cards.map((c) => c.term),
       });
       const n = await addCards(deck.id, res.cards.map((c) => ({
-        term: c.term, definition: c.definition_ru, example: c.example_de, note: c.note_ru,
+        term: c.term, definition: c.definition_ru, example: c.example_de, note: c.note_ru, emoji: c.emoji,
       })));
       onDone(ruWords.added(n));
     } catch (e) {
@@ -49,8 +49,8 @@ export function AiTopicPanel({ deck, cards, onDone }: { deck: Deck; cards: WordC
   );
 }
 
-/** Cards that still need a translation or an example. */
-export const incomplete = (cards: WordCard[]) => cards.filter((c) => !c.definition || !c.example);
+/** Cards that still need a translation, an example or a picture. */
+export const incomplete = (cards: WordCard[]) => cards.filter((c) => !c.definition || !c.example || !c.emoji);
 
 /** "Дополнить": translation/example for her own words, without overwriting what she typed. */
 export async function completeCards(deck: Deck, cards: WordCard[]): Promise<number> {
@@ -68,6 +68,7 @@ export async function completeCards(deck: Deck, cards: WordCard[]): Promise<numb
       definition: c.definition || g.definition_ru,
       example: c.example || g.example_de,
       note: c.note || g.note_ru,
+      emoji: c.emoji || g.emoji,
     });
     n++;
   }

@@ -99,7 +99,7 @@ describe('DeckPage', () => {
   it('AI: adds generated cards for the deck topic, excluding existing terms', async () => {
     const user = userEvent.setup();
     const deckId = await seedDeck([{ term: 'der Termin', definition: 'встреча' }]);
-    generateMock.mockResolvedValueOnce({ cards: [{ term: 'die Frist', definition_ru: 'срок', example_de: 'Die Frist läuft.', note_ru: '' }] });
+    generateMock.mockResolvedValueOnce({ cards: [{ term: 'die Frist', definition_ru: 'срок', example_de: 'Die Frist läuft.', note_ru: '', emoji: '⏰' }] });
     renderAt(`/words/${deckId}`);
     await user.click(await screen.findByRole('button', { name: ruWords.aiTopic }));
     await user.click(screen.getByRole('button', { name: ruWords.aiGenerate }));
@@ -110,12 +110,12 @@ describe('DeckPage', () => {
   it('AI: completes cards without translation, keeping what she typed', async () => {
     const user = userEvent.setup();
     const deckId = await seedDeck([{ term: 'Besprechung', definition: '' }]);
-    generateMock.mockResolvedValueOnce({ cards: [{ term: 'die Besprechung', definition_ru: 'совещание', example_de: 'Die Besprechung beginnt.', note_ru: 'мн. die Besprechungen' }] });
+    generateMock.mockResolvedValueOnce({ cards: [{ term: 'die Besprechung', definition_ru: 'совещание', example_de: 'Die Besprechung beginnt.', note_ru: 'мн. die Besprechungen', emoji: '👥💬' }] });
     renderAt(`/words/${deckId}`);
     await user.click(await screen.findByRole('button', { name: ruWords.aiComplete(1) }));
     expect(await screen.findByText('совещание')).toBeInTheDocument();
     const [c] = await repo.listCards(deckId);
-    expect(c).toMatchObject({ term: 'Besprechung', definition: 'совещание', example: 'Die Besprechung beginnt.' });
+    expect(c).toMatchObject({ term: 'Besprechung', definition: 'совещание', example: 'Die Besprechung beginnt.', emoji: '👥💬' });
   });
 });
 

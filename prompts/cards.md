@@ -39,6 +39,12 @@ JSON-объект:
 **`example_de`** — одно короткое естественное предложение (до 12 слов),
 в котором `term` стоит в нужной форме. Тема примера — из `context`.
 
+**`emoji`** — 1–2 эмодзи, которые помогают запомнить смысл: картинка
+предмета (`🦠` die Schimmel → плесень) или маленькая «история» для
+абстрактного (`✋📄` Widerspruch einlegen). Только эмодзи, без букв и
+флагов стран. Не повторяй одни и те же эмодзи у разных карточек, если можно
+иначе.
+
 **Режим `topic`:** ровно `count` карточек (или меньше, если тема узкая), без
 повторов друг друга и `exclude`. Самое употребительное — первым.
 
@@ -65,9 +71,9 @@ JSON-объект:
 ```json
 {
   "cards": [
-    {"term": "einen Antrag stellen", "definition_ru": "подать заявление", "example_de": "Ich habe den Antrag letzte Woche online gestellt.", "note_ru": "мн. die Anträge"},
-    {"term": "die Aufenthaltserlaubnis verlängern", "definition_ru": "продлить вид на жительство", "example_de": "Meine Aufenthaltserlaubnis muss bis März verlängert werden.", "note_ru": "офиц."},
-    {"term": "Unterlagen nachreichen", "definition_ru": "донести документы", "example_de": "Kann ich die fehlenden Unterlagen nächste Woche nachreichen?", "note_ru": "die Unterlagen — только мн."}
+    {"term": "einen Antrag stellen", "definition_ru": "подать заявление", "example_de": "Ich habe den Antrag letzte Woche online gestellt.", "note_ru": "мн. die Anträge", "emoji": "📝📨"},
+    {"term": "die Aufenthaltserlaubnis verlängern", "definition_ru": "продлить вид на жительство", "example_de": "Meine Aufenthaltserlaubnis muss bis März verlängert werden.", "note_ru": "офиц.", "emoji": "🪪⏳"},
+    {"term": "Unterlagen nachreichen", "definition_ru": "донести документы", "example_de": "Kann ich die fehlenden Unterlagen nächste Woche nachreichen?", "note_ru": "die Unterlagen — только мн.", "emoji": "📎⏳"}
   ]
 }
 ```
@@ -88,8 +94,8 @@ JSON-объект:
 ```json
 {
   "cards": [
-    {"term": "die Besprechung", "definition_ru": "совещание, обсуждение", "example_de": "Die Besprechung wurde auf Donnerstag verschoben.", "note_ru": "мн. die Besprechungen"},
-    {"term": "sich (mit jdm.) abstimmen", "definition_ru": "согласовывать", "example_de": "Ich stimme mich kurz mit dem Team ab und melde mich.", "note_ru": "sich über etw. abstimmen — о чём"}
+    {"term": "die Besprechung", "definition_ru": "совещание, обсуждение", "example_de": "Die Besprechung wurde auf Donnerstag verschoben.", "note_ru": "мн. die Besprechungen", "emoji": "👥💬"},
+    {"term": "sich (mit jdm.) abstimmen", "definition_ru": "согласовывать", "example_de": "Ich stimme mich kurz mit dem Team ab und melde mich.", "note_ru": "sich über etw. abstimmen — о чём", "emoji": "🗣️🔄"}
   ]
 }
 ```

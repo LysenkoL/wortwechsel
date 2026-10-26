@@ -7,6 +7,7 @@ import { gradeAnswer, type Grade } from '../../../words/grade';
 import { askable } from '../../../words/questions';
 import { shuffle } from '../../../words/random';
 import { useSpeechRecognition } from '../../speech/useSpeechRecognition';
+import { CardEmoji } from '../CardEmoji';
 import { StudyHeader } from '../StudyHeader';
 import { AUTO_NEXT_MS } from '../WriteQuestion';
 import { useSpeak } from '../useSpeak';
@@ -70,7 +71,7 @@ export function SpeakMode({ cards, onExit }: ModeProps) {
     <section className="page">
       <StudyHeader title={ruWords.mode.speak} index={idx} total={queue.length} onExit={onExit} />
       <p className="muted small">{ruWords.sayIt}</p>
-      <div className="prompt-card" lang="ru">{card.definition}</div>
+      <div className="prompt-card" lang="ru"><CardEmoji card={card} />{card.definition}</div>
 
       {grade ? (
         <div className={`feedback ${grade.ok ? 'ok' : 'bad'}`} role="status">

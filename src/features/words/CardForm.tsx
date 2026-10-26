@@ -12,7 +12,7 @@ interface Props {
 }
 
 export function CardForm({ initial, submitLabel, onSubmit, onCancel, resetOnSubmit = false }: Props) {
-  const empty = { term: '', definition: '', example: '', note: '' };
+  const empty = { term: '', definition: '', example: '', note: '', emoji: '' };
   const [v, setV] = useState({ ...empty, ...initial });
   const set = (k: keyof typeof empty) => (e: React.ChangeEvent<HTMLInputElement>) => setV({ ...v, [k]: e.target.value });
 
@@ -36,6 +36,10 @@ export function CardForm({ initial, submitLabel, onSubmit, onCancel, resetOnSubm
       <div className="field">
         <label htmlFor="c-ex">{ruWords.example}</label>
         <input id="c-ex" type="text" lang="de" value={v.example} onChange={set('example')} autoComplete="off" />
+      </div>
+      <div className="field">
+        <label htmlFor="c-emoji">{ruWords.emoji}</label>
+        <input id="c-emoji" type="text" value={v.emoji} placeholder="🦠" onChange={set('emoji')} autoComplete="off" />
       </div>
       <div className="field">
         <label htmlFor="c-note">{ruWords.note}</label>
